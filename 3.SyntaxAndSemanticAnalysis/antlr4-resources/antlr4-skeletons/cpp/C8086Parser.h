@@ -4,6 +4,7 @@
     #include <string>
     #include <cstdlib>
     #include "C8086Lexer.h"
+	#include "SymbolTable/2105128_SymbolTable.cpp"
 
     extern std::ofstream parserLogFile;
     extern std::ofstream errorFile;
@@ -36,13 +37,13 @@ public:
 
   enum {
     RuleStart = 0, RuleProgram = 1, RuleUnit = 2, RuleFunc_declaration = 3, 
-    RuleFunc_definition = 4, RuleParameter_list = 5, RuleCompound_statement = 6, 
-    RuleVar_declaration = 7, RuleDeclaration_list_err = 8, RuleType_specifier = 9, 
-    RuleDeclaration_list = 10, RuleStatements = 11, RuleStatement = 12, 
-    RuleExpression_statement = 13, RuleVariable = 14, RuleExpression = 15, 
-    RuleLogic_expression = 16, RuleRel_expression = 17, RuleSimple_expression = 18, 
-    RuleTerm = 19, RuleUnary_expression = 20, RuleFactor = 21, RuleArgument_list = 22, 
-    RuleArguments = 23
+    RuleFunc_definition = 4, RuleFunc_name = 5, RuleParameter_list = 6, 
+    RuleCompound_statement = 7, RuleVar_declaration = 8, RuleDeclaration_list_err = 9, 
+    RuleType_specifier = 10, RuleDeclaration_list = 11, RuleStatements = 12, 
+    RuleStatement = 13, RuleExpression_statement = 14, RuleVariable = 15, 
+    RuleExpression = 16, RuleLogic_expression = 17, RuleRel_expression = 18, 
+    RuleSimple_expression = 19, RuleTerm = 20, RuleUnary_expression = 21, 
+    RuleFactor = 22, RuleArgument_list = 23, RuleArguments = 24, RuleCurlybrace = 25
   };
 
   explicit C8086Parser(antlr4::TokenStream *input);
@@ -81,12 +82,20 @@ public:
           errorFile.flush();
       }
 
+  	SymbolTable* symbolTable = new SymbolTable(30, &HashFunction::SDBMHash);
+  	int has_param = 0;
+  	int err_count = 0;
+  	string data_type="";
+  	string type1="",type2="";
+  	string return_type="";
+
 
   class StartContext;
   class ProgramContext;
   class UnitContext;
   class Func_declarationContext;
   class Func_definitionContext;
+  class Func_nameContext;
   class Parameter_listContext;
   class Compound_statementContext;
   class Var_declarationContext;
@@ -105,10 +114,12 @@ public:
   class Unary_expressionContext;
   class FactorContext;
   class Argument_listContext;
-  class ArgumentsContext; 
+  class ArgumentsContext;
+  class CurlybraceContext; 
 
   class  StartContext : public antlr4::ParserRuleContext {
   public:
+    C8086Parser::ProgramContext *pg = nullptr;
     StartContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     ProgramContext *program();
@@ -161,18 +172,18 @@ public:
   public:
     string func_dec_text;
     C8086Parser::Type_specifierContext *ts = nullptr;
-    antlr4::Token *idToken = nullptr;
+    C8086Parser::Func_nameContext *fn = nullptr;
     antlr4::Token *lparenToken = nullptr;
     C8086Parser::Parameter_listContext *pm = nullptr;
     antlr4::Token *rparenToken = nullptr;
     antlr4::Token *semicolonToken = nullptr;
     Func_declarationContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *ID();
     antlr4::tree::TerminalNode *LPAREN();
     antlr4::tree::TerminalNode *RPAREN();
     antlr4::tree::TerminalNode *SEMICOLON();
     Type_specifierContext *type_specifier();
+    Func_nameContext *func_name();
     Parameter_listContext *parameter_list();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -186,17 +197,17 @@ public:
   public:
     string func_def_text;
     C8086Parser::Type_specifierContext *ts = nullptr;
-    antlr4::Token *idToken = nullptr;
+    C8086Parser::Func_nameContext *fn = nullptr;
     antlr4::Token *lparenToken = nullptr;
     C8086Parser::Parameter_listContext *pm = nullptr;
     antlr4::Token *rparenToken = nullptr;
     C8086Parser::Compound_statementContext *cmst = nullptr;
     Func_definitionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *ID();
     antlr4::tree::TerminalNode *LPAREN();
     antlr4::tree::TerminalNode *RPAREN();
     Type_specifierContext *type_specifier();
+    Func_nameContext *func_name();
     Parameter_listContext *parameter_list();
     Compound_statementContext *compound_statement();
 
@@ -206,6 +217,21 @@ public:
   };
 
   Func_definitionContext* func_definition();
+
+  class  Func_nameContext : public antlr4::ParserRuleContext {
+  public:
+    string func_name_text;
+    antlr4::Token *idToken = nullptr;
+    Func_nameContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *ID();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  Func_nameContext* func_name();
 
   class  Parameter_listContext : public antlr4::ParserRuleContext {
   public:
@@ -230,13 +256,13 @@ public:
   class  Compound_statementContext : public antlr4::ParserRuleContext {
   public:
     string cmst_text;
-    antlr4::Token *lcurlToken = nullptr;
+    C8086Parser::CurlybraceContext *c = nullptr;
     C8086Parser::StatementsContext *stmts = nullptr;
     antlr4::Token *rcurlToken = nullptr;
     Compound_statementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
-    antlr4::tree::TerminalNode *LCURL();
     antlr4::tree::TerminalNode *RCURL();
+    CurlybraceContext *curlybrace();
     StatementsContext *statements();
 
     virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
@@ -613,6 +639,21 @@ public:
 
   ArgumentsContext* arguments();
   ArgumentsContext* arguments(int precedence);
+  class  CurlybraceContext : public antlr4::ParserRuleContext {
+  public:
+    string curl_text;
+    antlr4::Token *lcurlToken = nullptr;
+    CurlybraceContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    virtual size_t getRuleIndex() const override;
+    antlr4::tree::TerminalNode *LCURL();
+
+    virtual void enterRule(antlr4::tree::ParseTreeListener *listener) override;
+    virtual void exitRule(antlr4::tree::ParseTreeListener *listener) override;
+   
+  };
+
+  CurlybraceContext* curlybrace();
+
 
   bool sempred(antlr4::RuleContext *_localctx, size_t ruleIndex, size_t predicateIndex) override;
 

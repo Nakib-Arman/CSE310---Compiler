@@ -31,6 +31,9 @@ public:
   virtual void enterFunc_definition(C8086Parser::Func_definitionContext * /*ctx*/) override { }
   virtual void exitFunc_definition(C8086Parser::Func_definitionContext * /*ctx*/) override { }
 
+  virtual void enterFunc_name(C8086Parser::Func_nameContext * /*ctx*/) override { }
+  virtual void exitFunc_name(C8086Parser::Func_nameContext * /*ctx*/) override { }
+
   virtual void enterParameter_list(C8086Parser::Parameter_listContext * /*ctx*/) override { }
   virtual void exitParameter_list(C8086Parser::Parameter_listContext * /*ctx*/) override { }
 
@@ -87,6 +90,9 @@ public:
 
   virtual void enterArguments(C8086Parser::ArgumentsContext * /*ctx*/) override { }
   virtual void exitArguments(C8086Parser::ArgumentsContext * /*ctx*/) override { }
+
+  virtual void enterCurlybrace(C8086Parser::CurlybraceContext * /*ctx*/) override { }
+  virtual void exitCurlybrace(C8086Parser::CurlybraceContext * /*ctx*/) override { }
 
 
   virtual void enterEveryRule(antlr4::ParserRuleContext * /*ctx*/) override { }

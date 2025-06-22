@@ -29,6 +29,9 @@ public:
   virtual void enterFunc_definition(C8086Parser::Func_definitionContext *ctx) = 0;
   virtual void exitFunc_definition(C8086Parser::Func_definitionContext *ctx) = 0;
 
+  virtual void enterFunc_name(C8086Parser::Func_nameContext *ctx) = 0;
+  virtual void exitFunc_name(C8086Parser::Func_nameContext *ctx) = 0;
+
   virtual void enterParameter_list(C8086Parser::Parameter_listContext *ctx) = 0;
   virtual void exitParameter_list(C8086Parser::Parameter_listContext *ctx) = 0;
 
@@ -85,6 +88,9 @@ public:
 
   virtual void enterArguments(C8086Parser::ArgumentsContext *ctx) = 0;
   virtual void exitArguments(C8086Parser::ArgumentsContext *ctx) = 0;
+
+  virtual void enterCurlybrace(C8086Parser::CurlybraceContext *ctx) = 0;
+  virtual void exitCurlybrace(C8086Parser::CurlybraceContext *ctx) = 0;
 
 
 };
