@@ -609,8 +609,10 @@ C8086Parser::Func_declarationContext* C8086Parser::func_declaration() {
       			writeIntoparserLogFile("Line " + to_string(antlrcpp::downCast<Func_declarationContext *>(_localctx)->semicolonToken->getLine()) + ": func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON\n");
       			writeIntoparserLogFile(_localctx->func_dec_text + "\n");
 
-      			symbolTable->insert(antlrcpp::downCast<Func_declarationContext *>(_localctx)->fn->func_name_text,"func","");
       			symbolTable->ExitScope();
+      			SymbolInfo* temp = symbolTable->LookUp(antlrcpp::downCast<Func_declarationContext *>(_localctx)->fn->func_name_text);
+      			temp->setReturnType(antlrcpp::downCast<Func_declarationContext *>(_localctx)->ts->name_line);
+      			temp_func->clearParamList();
       		
       break;
     }
@@ -632,8 +634,10 @@ C8086Parser::Func_declarationContext* C8086Parser::func_declaration() {
       			writeIntoparserLogFile("Line " + to_string(antlrcpp::downCast<Func_declarationContext *>(_localctx)->semicolonToken->getLine()) + ": func_declaration : type_specifier ID LPAREN RPAREN SEMICOLON\n");
       			writeIntoparserLogFile(_localctx->func_dec_text + "\n");
 
-      			symbolTable->insert(antlrcpp::downCast<Func_declarationContext *>(_localctx)->fn->func_name_text,"func","");
       			symbolTable->ExitScope();
+      			SymbolInfo* temp = symbolTable->LookUp(antlrcpp::downCast<Func_declarationContext *>(_localctx)->fn->func_name_text);
+      			temp->setReturnType(antlrcpp::downCast<Func_declarationContext *>(_localctx)->ts->name_line);
+      			temp_func->clearParamList();
       		
       break;
     }
@@ -817,10 +821,11 @@ C8086Parser::Func_nameContext* C8086Parser::func_name() {
         setState(113);
         antlrcpp::downCast<Func_nameContext *>(_localctx)->idToken = match(C8086Parser::ID);
 
-        			symbolTable->insert(antlrcpp::downCast<Func_nameContext *>(_localctx)->idToken->getText(),"func","");
+        			symbolTable->insert(antlrcpp::downCast<Func_nameContext *>(_localctx)->idToken->getText(),"func",temp_func);
         			symbolTable->EnterScope();
         			has_param = 1;
         			antlrcpp::downCast<Func_nameContext *>(_localctx)->func_name_text =  antlrcpp::downCast<Func_nameContext *>(_localctx)->idToken->getText();
+        			writeIntoparserLogFile("Hello\n");
         		
         break;
       }
@@ -923,11 +928,12 @@ C8086Parser::Parameter_listContext* C8086Parser::parameter_list(int precedence) 
       			writeIntoparserLogFile("Line " + to_string(antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getLine()) + ": parameter_list : type_specifier ID\n");
       			writeIntoparserLogFile(_localctx->param_text + "\n");
       			
-      			bool inserted = symbolTable->insert(antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getText(),antlrcpp::downCast<Parameter_listContext *>(_localctx)->ts->name_line,"");
+      			bool inserted = symbolTable->insert(antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getText(),antlrcpp::downCast<Parameter_listContext *>(_localctx)->ts->name_line);
       			if (!inserted) {
       				writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getText() + "\n");
       				err_count++;
       			}
+      			temp_func->addToParamList(antlrcpp::downCast<Parameter_listContext *>(_localctx)->ts->name_line);
       		
       break;
     }
@@ -972,11 +978,12 @@ C8086Parser::Parameter_listContext* C8086Parser::parameter_list(int precedence) 
           setState(131);
           antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken = match(C8086Parser::ID);
 
-                    			bool inserted = symbolTable->insert(antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getText(),antlrcpp::downCast<Parameter_listContext *>(_localctx)->ts->name_line,"");
+                    			bool inserted = symbolTable->insert(antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getText(),antlrcpp::downCast<Parameter_listContext *>(_localctx)->ts->name_line);
                     			if (!inserted) {
                     				writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getText() + " in parameter\n");
                     				err_count++;
                     			}
+                    			temp_func->addToParamList(antlrcpp::downCast<Parameter_listContext *>(_localctx)->ts->name_line);
 
                     			antlrcpp::downCast<Parameter_listContext *>(_localctx)->param_text =  antlrcpp::downCast<Parameter_listContext *>(_localctx)->pm->param_text + "," + antlrcpp::downCast<Parameter_listContext *>(_localctx)->ts->name_line + " " + antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getText();
                     			writeIntoparserLogFile("Line " + to_string(antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getLine()) + ": parameter_list : parameter_list COMMA type_specifier ID\n");
@@ -1456,7 +1463,7 @@ C8086Parser::Declaration_listContext* C8086Parser::declaration_list(int preceden
       setState(176);
       antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken = match(C8086Parser::ID);
 
-      			bool inserted = symbolTable->insert(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText(),data_type,"");
+      			bool inserted = symbolTable->insert(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText(),data_type);
       			if(!inserted) {
       				writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText() + "\n");
       				err_count++;
@@ -1478,7 +1485,7 @@ C8086Parser::Declaration_listContext* C8086Parser::declaration_list(int preceden
       setState(181);
       antlrcpp::downCast<Declaration_listContext *>(_localctx)->rthirdToken = match(C8086Parser::RTHIRD);
 
-      			bool inserted = symbolTable->insert(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText(),data_type + " array","");
+      			bool inserted = symbolTable->insert(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText(),data_type + " array");
       			if(!inserted) {
       				writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText() + "\n");
       				err_count++;
@@ -1517,7 +1524,7 @@ C8086Parser::Declaration_listContext* C8086Parser::declaration_list(int preceden
           setState(187);
           antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken = match(C8086Parser::ID);
 
-                    			bool inserted = symbolTable->insert(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText(),data_type,"");
+                    			bool inserted = symbolTable->insert(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText(),data_type);
                     			if(!inserted) {
                     				writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText() + "\n");
                     				err_count++;
@@ -1547,7 +1554,7 @@ C8086Parser::Declaration_listContext* C8086Parser::declaration_list(int preceden
           setState(194);
           antlrcpp::downCast<Declaration_listContext *>(_localctx)->rthirdToken = match(C8086Parser::RTHIRD);
 
-                    			bool inserted = symbolTable->insert(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText(),data_type + " array","");
+                    			bool inserted = symbolTable->insert(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText(),data_type + " array");
                     			if(!inserted) {
                     				writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText() + "\n");
                     				err_count++;

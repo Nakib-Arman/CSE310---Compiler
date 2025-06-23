@@ -83,6 +83,7 @@ public:
       }
 
   	SymbolTable* symbolTable = new SymbolTable(30, &HashFunction::SDBMHash);
+  	Function* temp_func = new Function();
   	int has_param = 0;
   	int err_count = 0;
   	string data_type="";

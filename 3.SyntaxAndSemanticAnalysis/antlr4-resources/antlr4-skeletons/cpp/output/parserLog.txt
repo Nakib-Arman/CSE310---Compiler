@@ -55,6 +55,8 @@ Line 3: type_specifier : INT
 
 int
 
+Hello
+
 Line 3: type_specifier : INT
 
 int
@@ -91,6 +93,8 @@ int var(int a,int b);
 Line 5: type_specifier : INT
 
 int
+
+Hello
 
 Line 5: type_specifier : INT
 
@@ -129,6 +133,8 @@ int foo3(int a,int b);
 Line 7: type_specifier : INT
 
 int
+
+Hello
 
 Line 7: type_specifier : INT
 
@@ -238,6 +244,8 @@ return 7;
 Line 11: type_specifier : INT
 
 int
+
+Hello
 
 Line 11: type_specifier : INT
 
@@ -373,6 +381,8 @@ Line 16: type_specifier : VOID
 
 void
 
+Hello
+
 Line 16: type_specifier : INT
 
 int
@@ -490,6 +500,8 @@ y=6;
 Line 20: type_specifier : INT
 
 int
+
+Hello
 
 Line 20: type_specifier : INT
 
@@ -645,6 +657,8 @@ Line 24: type_specifier : VOID
 
 void
 
+Hello
+
 Line 24: type_specifier : INT
 
 int
@@ -781,6 +795,8 @@ Line 28: type_specifier : INT
 
 int
 
+Hello
+
 Line 28: type_specifier : INT
 
 int
@@ -907,6 +923,8 @@ return d;
 Line 32: type_specifier : INT
 
 int
+
+Hello
 
 Line 32: type_specifier : INT
 
@@ -1038,6 +1056,8 @@ return a;
 Line 36: type_specifier : VOID
 
 void
+
+Hello
 
 Line 36: type_specifier : INT
 
@@ -1190,6 +1210,8 @@ return a+3;
 Line 40: type_specifier : INT
 
 int
+
+Hello
 
 Line 41: type_specifier : INT
 

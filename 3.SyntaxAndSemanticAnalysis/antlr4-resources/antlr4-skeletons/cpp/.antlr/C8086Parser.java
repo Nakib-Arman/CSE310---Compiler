@@ -141,6 +141,7 @@ public class C8086Parser extends Parser {
 	    }
 
 		SymbolTable* symbolTable = new SymbolTable(30, &HashFunction::SDBMHash);
+		Function* temp_func = new Function();
 		int has_param = 0;
 		int err_count = 0;
 		string data_type="";
@@ -406,8 +407,11 @@ public class C8086Parser extends Parser {
 							writeIntoparserLogFile("Line " + to_string(((Func_declarationContext)_localctx).SEMICOLON->getLine()) + ": func_declaration : type_specifier ID LPAREN parameter_list RPAREN SEMICOLON\n");
 							writeIntoparserLogFile(_localctx.func_dec_text + "\n");
 
-							symbolTable->insert(((Func_declarationContext)_localctx).fn.func_name_text,"func","");
 							symbolTable->ExitScope();
+							SymbolInfo* temp = symbolTable->LookUp(((Func_declarationContext)_localctx).fn.func_name_text);
+							temp->setReturnType(((Func_declarationContext)_localctx).ts.name_line);
+							temp->declareFunc();
+							temp_func->clearParamList();
 						
 				}
 				break;
@@ -429,8 +433,11 @@ public class C8086Parser extends Parser {
 							writeIntoparserLogFile("Line " + to_string(((Func_declarationContext)_localctx).SEMICOLON->getLine()) + ": func_declaration : type_specifier ID LPAREN RPAREN SEMICOLON\n");
 							writeIntoparserLogFile(_localctx.func_dec_text + "\n");
 
-							symbolTable->insert(((Func_declarationContext)_localctx).fn.func_name_text,"func","");
 							symbolTable->ExitScope();
+							SymbolInfo* temp = symbolTable->LookUp(((Func_declarationContext)_localctx).fn.func_name_text);
+							temp->setReturnType(((Func_declarationContext)_localctx).ts.name_line);
+							temp->declareFunc();
+							temp_func->clearParamList();
 						
 				}
 				break;
@@ -562,7 +569,8 @@ public class C8086Parser extends Parser {
 				setState(113);
 				((Func_nameContext)_localctx).ID = match(ID);
 
-							symbolTable->insert(((Func_nameContext)_localctx).ID->getText(),"func","");
+							temp_func->setName(((Func_nameContext)_localctx).ID->getText());
+							symbolTable->insert(((Func_nameContext)_localctx).ID->getText(),"func",temp_func);
 							symbolTable->EnterScope();
 							has_param = 1;
 							((Func_nameContext)_localctx).func_name_text =  ((Func_nameContext)_localctx).ID->getText();
@@ -638,11 +646,12 @@ public class C8086Parser extends Parser {
 							writeIntoparserLogFile("Line " + to_string(((Parameter_listContext)_localctx).ID->getLine()) + ": parameter_list : type_specifier ID\n");
 							writeIntoparserLogFile(_localctx.param_text + "\n");
 							
-							bool inserted = symbolTable->insert(((Parameter_listContext)_localctx).ID->getText(),((Parameter_listContext)_localctx).ts.name_line,"");
+							bool inserted = symbolTable->insert(((Parameter_listContext)_localctx).ID->getText(),((Parameter_listContext)_localctx).ts.name_line);
 							if (!inserted) {
 								writeIntoparserLogFile("Error at line " + to_string(((Parameter_listContext)_localctx).ID->getLine()) + ": Multiple declaration of " + ((Parameter_listContext)_localctx).ID->getText() + "\n");
 								err_count++;
 							}
+							temp_func->addToParamList(((Parameter_listContext)_localctx).ts.name_line);
 						
 				}
 				break;
@@ -684,11 +693,12 @@ public class C8086Parser extends Parser {
 						setState(131);
 						((Parameter_listContext)_localctx).ID = match(ID);
 
-						          			bool inserted = symbolTable->insert(((Parameter_listContext)_localctx).ID->getText(),((Parameter_listContext)_localctx).ts.name_line,"");
+						          			bool inserted = symbolTable->insert(((Parameter_listContext)_localctx).ID->getText(),((Parameter_listContext)_localctx).ts.name_line);
 						          			if (!inserted) {
 						          				writeIntoparserLogFile("Error at line " + to_string(((Parameter_listContext)_localctx).ID->getLine()) + ": Multiple declaration of " + ((Parameter_listContext)_localctx).ID->getText() + " in parameter\n");
 						          				err_count++;
 						          			}
+						          			temp_func->addToParamList(((Parameter_listContext)_localctx).ts.name_line);
 
 						          			((Parameter_listContext)_localctx).param_text =  ((Parameter_listContext)_localctx).pm.param_text + "," + ((Parameter_listContext)_localctx).ts.name_line + " " + ((Parameter_listContext)_localctx).ID->getText();
 						          			writeIntoparserLogFile("Line " + to_string(((Parameter_listContext)_localctx).ID->getLine()) + ": parameter_list : parameter_list COMMA type_specifier ID\n");
@@ -1039,7 +1049,7 @@ public class C8086Parser extends Parser {
 				setState(176);
 				((Declaration_listContext)_localctx).ID = match(ID);
 
-							bool inserted = symbolTable->insert(((Declaration_listContext)_localctx).ID->getText(),data_type,"");
+							bool inserted = symbolTable->insert(((Declaration_listContext)_localctx).ID->getText(),data_type);
 							if(!inserted) {
 								writeIntoparserLogFile("Error at line " + to_string(((Declaration_listContext)_localctx).ID->getLine()) + ": Multiple declaration of " + ((Declaration_listContext)_localctx).ID->getText() + "\n");
 								err_count++;
@@ -1061,7 +1071,7 @@ public class C8086Parser extends Parser {
 				setState(181);
 				((Declaration_listContext)_localctx).RTHIRD = match(RTHIRD);
 
-							bool inserted = symbolTable->insert(((Declaration_listContext)_localctx).ID->getText(),data_type + " array","");
+							bool inserted = symbolTable->insert(((Declaration_listContext)_localctx).ID->getText(),data_type + " array");
 							if(!inserted) {
 								writeIntoparserLogFile("Error at line " + to_string(((Declaration_listContext)_localctx).ID->getLine()) + ": Multiple declaration of " + ((Declaration_listContext)_localctx).ID->getText() + "\n");
 								err_count++;
@@ -1097,7 +1107,7 @@ public class C8086Parser extends Parser {
 						setState(187);
 						((Declaration_listContext)_localctx).ID = match(ID);
 
-						          			bool inserted = symbolTable->insert(((Declaration_listContext)_localctx).ID->getText(),data_type,"");
+						          			bool inserted = symbolTable->insert(((Declaration_listContext)_localctx).ID->getText(),data_type);
 						          			if(!inserted) {
 						          				writeIntoparserLogFile("Error at line " + to_string(((Declaration_listContext)_localctx).ID->getLine()) + ": Multiple declaration of " + ((Declaration_listContext)_localctx).ID->getText() + "\n");
 						          				err_count++;
@@ -1126,7 +1136,7 @@ public class C8086Parser extends Parser {
 						setState(194);
 						((Declaration_listContext)_localctx).RTHIRD = match(RTHIRD);
 
-						          			bool inserted = symbolTable->insert(((Declaration_listContext)_localctx).ID->getText(),data_type + " array","");
+						          			bool inserted = symbolTable->insert(((Declaration_listContext)_localctx).ID->getText(),data_type + " array");
 						          			if(!inserted) {
 						          				writeIntoparserLogFile("Error at line " + to_string(((Declaration_listContext)_localctx).ID->getLine()) + ": Multiple declaration of " + ((Declaration_listContext)_localctx).ID->getText() + "\n");
 						          				err_count++;
