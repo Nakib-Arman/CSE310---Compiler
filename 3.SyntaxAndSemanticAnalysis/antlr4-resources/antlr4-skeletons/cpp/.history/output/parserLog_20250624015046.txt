@@ -1,0 +1,265 @@
+Line 1: type_specifier : INT
+
+int
+
+Line 1: declaration_list : ID
+
+x
+
+Line 1: declaration_list : declaration_list COMMA ID
+
+x,y
+
+Line 1: declaration_list : declaration_list COMMA ID
+
+x,y,z
+
+Line 1: var_declaration : type_specifier declaration_list SEMICOLON
+
+int x,y,z;
+
+Line 1: unit : var_declaration
+
+int x,y,z;
+
+Line 1: program : unit
+
+int x,y,z;
+
+Line 1: type_specifier : FLOAT
+
+float
+
+Line 1: declaration_list : ID
+
+a
+
+Line 1: var_declaration : type_specifier declaration_list SEMICOLON
+
+float a;
+
+Line 1: unit : var_declaration
+
+float a;
+
+Line 1: program : program unit
+
+int x,y,z;
+float a;
+
+Line 3: type_specifier : INT
+
+int
+
+Line 3: type_specifier : INT
+
+int
+
+Line 3: parameter_list : type_specifier
+
+int
+
+Error at line 3: syntax error, unexpected ADDOP, expecting RPAREN or COMMA
+
+Line 4: compound_statement : LCURL RCURL
+
+{}
+
+ScopeTable # 1.1
+ScopeTable # 1
+ 0 --> < x : ID > 
+ 1 --> < y : ID > 
+ 2 --> < z : ID > 
+ 5 --> < var : ID > 
+ 7 --> < a : ID > 
+
+Line 4: func_definition : type_specifier ID LPAREN RPAREN compound_statement
+
+int var(int){}
+
+Line 4: unit : func_definition
+
+int var(int){}
+
+Line 4: program : program unit
+
+int x,y,z;
+float a;
+int var(int){}
+
+
+Line 4: unit : func_definition
+
+
+
+Line 4: program : program unit
+
+int x,y,z;
+float a;
+int var(int){}
+
+
+
+Line 7: unit : func_definition
+
+
+
+Line 7: program : program unit
+
+int x,y,z;
+float a;
+int var(int){}
+
+
+
+
+Line 7: unit : func_definition
+
+
+
+Line 7: program : program unit
+
+int x,y,z;
+float a;
+int var(int){}
+
+
+
+
+
+Line 7: unit : func_definition
+
+
+
+Line 7: program : program unit
+
+int x,y,z;
+float a;
+int var(int){}
+
+
+
+
+
+Line 8: type_specifier : INT
+
+int
+
+Error at line 8: Multiple declaration of x
+
+Line 8: declaration_list : ID
+
+x
+
+Error at line 8: syntax error, unexpected ADDOP, expecting COMMA or SEMICOLON
+
+Error at line 8: Multiple declaration of z
+
+Line 8: declaration_list : declaration_list COMMA ID
+
+x,z
+
+Line 8: var_declaration : type_specifier declaration_list SEMICOLON
+
+int x,z;
+
+Line 8: unit : var_declaration
+
+int x,z;
+
+Line 8: program : program unit
+
+int x,y,z;
+float a;
+int var(int){}
+
+
+
+
+int x,z;
+
+
+Line 8: unit : func_definition
+
+
+
+Line 8: program : program unit
+
+int x,y,z;
+float a;
+int var(int){}
+
+
+
+
+int x,z;
+
+
+
+Line 9: unit : func_definition
+
+
+
+Line 9: program : program unit
+
+int x,y,z;
+float a;
+int var(int){}
+
+
+
+
+int x,z;
+
+
+
+
+Line 9: unit : func_definition
+
+
+
+Line 9: program : program unit
+
+int x,y,z;
+float a;
+int var(int){}
+
+
+
+
+int x,z;
+
+
+
+
+
+Line 15: unit : func_definition
+
+
+
+Line 15: program : program unit
+
+int x,y,z;
+float a;
+int var(int){}
+
+
+
+
+int x,z;
+
+
+
+
+
+Line 15: start : program
+
+ScopeTable # 1
+ 0 --> < x : ID > 
+ 1 --> < y : ID > 
+ 2 --> < z : ID > 
+ 5 --> < var : ID > 
+ 7 --> < a : ID > 
+
+Total number of lines: 15
+Total number of errors: 3
