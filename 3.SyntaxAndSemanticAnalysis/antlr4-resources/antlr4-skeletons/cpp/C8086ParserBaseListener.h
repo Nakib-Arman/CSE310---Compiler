@@ -28,11 +28,20 @@ public:
   virtual void enterFunc_declaration(C8086Parser::Func_declarationContext * /*ctx*/) override { }
   virtual void exitFunc_declaration(C8086Parser::Func_declarationContext * /*ctx*/) override { }
 
+  virtual void enterFunc_name_dec(C8086Parser::Func_name_decContext * /*ctx*/) override { }
+  virtual void exitFunc_name_dec(C8086Parser::Func_name_decContext * /*ctx*/) override { }
+
   virtual void enterFunc_definition(C8086Parser::Func_definitionContext * /*ctx*/) override { }
   virtual void exitFunc_definition(C8086Parser::Func_definitionContext * /*ctx*/) override { }
 
   virtual void enterFunc_name(C8086Parser::Func_nameContext * /*ctx*/) override { }
   virtual void exitFunc_name(C8086Parser::Func_nameContext * /*ctx*/) override { }
+
+  virtual void enterReturn_type(C8086Parser::Return_typeContext * /*ctx*/) override { }
+  virtual void exitReturn_type(C8086Parser::Return_typeContext * /*ctx*/) override { }
+
+  virtual void enterR_paren(C8086Parser::R_parenContext * /*ctx*/) override { }
+  virtual void exitR_paren(C8086Parser::R_parenContext * /*ctx*/) override { }
 
   virtual void enterParameter_list(C8086Parser::Parameter_listContext * /*ctx*/) override { }
   virtual void exitParameter_list(C8086Parser::Parameter_listContext * /*ctx*/) override { }
