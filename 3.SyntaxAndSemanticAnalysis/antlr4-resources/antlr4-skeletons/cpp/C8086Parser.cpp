@@ -828,11 +828,18 @@ C8086Parser::Func_definitionContext* C8086Parser::func_definition() {
       setState(112);
       antlrcpp::downCast<Func_definitionContext *>(_localctx)->cmst = compound_statement();
 
+      			if(antlrcpp::downCast<Func_definitionContext *>(_localctx)->cmst->type == "return" && antlrcpp::downCast<Func_definitionContext *>(_localctx)->ts->name_line == "void") {
+      				writeIntoparserLogFile("Error at line " + to_string((antlrcpp::downCast<Func_definitionContext *>(_localctx)->cmst != nullptr ? (antlrcpp::downCast<Func_definitionContext *>(_localctx)->cmst->stop) : nullptr)->getLine()) + ": Cannot return value from function " + antlrcpp::downCast<Func_definitionContext *>(_localctx)->fn->func_name_text + " with void return type\n");
+      				writeIntoparserErrorFile("Error at line " + to_string((antlrcpp::downCast<Func_definitionContext *>(_localctx)->cmst != nullptr ? (antlrcpp::downCast<Func_definitionContext *>(_localctx)->cmst->stop) : nullptr)->getLine()) + ": Cannot return value from function " + antlrcpp::downCast<Func_definitionContext *>(_localctx)->fn->func_name_text + " with void return type\n");
+      				err_count++;
+      			}
+
+      			cur_func->clearParamList();
+
       			antlrcpp::downCast<Func_definitionContext *>(_localctx)->func_def_text =  antlrcpp::downCast<Func_definitionContext *>(_localctx)->ts->name_line + " " + antlrcpp::downCast<Func_definitionContext *>(_localctx)->fn->func_name_text + antlrcpp::downCast<Func_definitionContext *>(_localctx)->lparenToken->getText() + antlrcpp::downCast<Func_definitionContext *>(_localctx)->pm->param_text + antlrcpp::downCast<Func_definitionContext *>(_localctx)->rp->rparen_text + antlrcpp::downCast<Func_definitionContext *>(_localctx)->cmst->cmst_text;
       			writeIntoparserLogFile("Line " + to_string((antlrcpp::downCast<Func_definitionContext *>(_localctx)->cmst != nullptr ? (antlrcpp::downCast<Func_definitionContext *>(_localctx)->cmst->stop) : nullptr)->getLine()) + ": func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement\n");
       			writeIntoparserLogFile(_localctx->func_def_text);
 
-      			cur_func->clearParamList();
       		
       break;
     }
@@ -1081,16 +1088,19 @@ C8086Parser::R_parenContext* C8086Parser::r_paren() {
         				else{
         					if(temp->getReturnType() != cur_func->getReturnType()){
         						writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<R_parenContext *>(_localctx)->rparenToken->getLine()) + ": Return type mismatch of " + cur_func->getName() + "\n");
+        						writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<R_parenContext *>(_localctx)->rparenToken->getLine()) + ": Return type mismatch of " + cur_func->getName() + "\n");
         						err_count++;
         					}
         					else if(temp->getParamNum() != cur_func->getParamNum()){
         						writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<R_parenContext *>(_localctx)->rparenToken->getLine()) + ": Total number of arguments mismatch with declaration in function " + cur_func->getName() + "\n");
+        						writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<R_parenContext *>(_localctx)->rparenToken->getLine()) + ": Total number of arguments mismatch with declaration in function " + cur_func->getName() + "\n");
         						err_count++;
         					}
         				}
         			}
         			else{
         				writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<R_parenContext *>(_localctx)->rparenToken->getLine()) + ": Multiple declaration of " + cur_func->getName() + "\n");
+        				writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<R_parenContext *>(_localctx)->rparenToken->getLine()) + ": Multiple declaration of " + cur_func->getName() + "\n");
         				err_count++;
         			}
         			antlrcpp::downCast<R_parenContext *>(_localctx)->rparen_text =  antlrcpp::downCast<R_parenContext *>(_localctx)->rparenToken->getText();
@@ -1200,6 +1210,7 @@ C8086Parser::Parameter_listContext* C8086Parser::parameter_list(int precedence) 
       				bool inserted = symbolTable->insert(antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getText(),antlrcpp::downCast<Parameter_listContext *>(_localctx)->ts->name_line);
       				if (!inserted) {
       					writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getText() + "\n");
+      					writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getText() + "\n");
       					err_count++;
       				}
       			}
@@ -1252,6 +1263,7 @@ C8086Parser::Parameter_listContext* C8086Parser::parameter_list(int precedence) 
                     				bool inserted = symbolTable->insert(antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getText(),antlrcpp::downCast<Parameter_listContext *>(_localctx)->ts->name_line);
                     				if (!inserted) {
                     					writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getText() + " in parameter\n");
+                    					writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Parameter_listContext *>(_localctx)->idToken->getText() + " in parameter\n");
                     					err_count++;
                     				}
                     			}
@@ -1353,6 +1365,7 @@ C8086Parser::Compound_statementContext* C8086Parser::compound_statement() {
       setState(166);
       antlrcpp::downCast<Compound_statementContext *>(_localctx)->rcurlToken = match(C8086Parser::RCURL);
 
+      				antlrcpp::downCast<Compound_statementContext *>(_localctx)->type =  antlrcpp::downCast<Compound_statementContext *>(_localctx)->stmts->type;
       				antlrcpp::downCast<Compound_statementContext *>(_localctx)->cmst_text =  antlrcpp::downCast<Compound_statementContext *>(_localctx)->c->curl_text + "\n" + antlrcpp::downCast<Compound_statementContext *>(_localctx)->stmts->stmts_text + antlrcpp::downCast<Compound_statementContext *>(_localctx)->rcurlToken->getText();
       				writeIntoparserLogFile("Line " + to_string(antlrcpp::downCast<Compound_statementContext *>(_localctx)->rcurlToken->getLine()) + ": compound_statement : LCURL statements RCURL\n");
       				writeIntoparserLogFile(_localctx->cmst_text + "\n");
@@ -1461,6 +1474,7 @@ C8086Parser::Var_declarationContext* C8086Parser::var_declaration() {
       		writeIntoparserLogFile("Line " + to_string(antlrcpp::downCast<Var_declarationContext *>(_localctx)->sm->getLine()) + ": var_declaration : type_specifier declaration_list SEMICOLON\n");
       		if (antlrcpp::downCast<Var_declarationContext *>(_localctx)->t->name_line == "void") {
       			writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<Var_declarationContext *>(_localctx)->sm->getLine()) + ": Variable type cannot be void\n");
+      			writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<Var_declarationContext *>(_localctx)->sm->getLine()) + ": Variable type cannot be void\n");
       			err_count++;
       		}
       		writeIntoparserLogFile(antlrcpp::downCast<Var_declarationContext *>(_localctx)->t->name_line + " " + antlrcpp::downCast<Var_declarationContext *>(_localctx)->dl->dl_list + ";\n");
@@ -1477,13 +1491,6 @@ C8086Parser::Var_declarationContext* C8086Parser::var_declaration() {
       setState(182);
       antlrcpp::downCast<Var_declarationContext *>(_localctx)->sm = match(C8086Parser::SEMICOLON);
 
-              writeIntoErrorFile(
-                  std::string("Line# ") + std::to_string(antlrcpp::downCast<Var_declarationContext *>(_localctx)->sm->getLine()) +
-                  " with error name: " + antlrcpp::downCast<Var_declarationContext *>(_localctx)->de->error_name +
-                  " - Syntax error at declaration list of variable declaration"
-              );
-
-              syntaxErrorCount++;
             
       break;
     }
@@ -1738,6 +1745,7 @@ C8086Parser::Declaration_listContext* C8086Parser::declaration_list(int preceden
       			bool inserted = symbolTable->insert(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText(),data_type);
       			if(!inserted) {
       				writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText() + "\n");
+      				writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText() + "\n");
       				err_count++;
       			}
       			antlrcpp::downCast<Declaration_listContext *>(_localctx)->dl_list =  antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText();
@@ -1760,6 +1768,7 @@ C8086Parser::Declaration_listContext* C8086Parser::declaration_list(int preceden
       			bool inserted = symbolTable->insert(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText(),data_type + " array");
       			if(!inserted) {
       				writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText() + "\n");
+      				writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText() + "\n");
       				err_count++;
       			}
       			antlrcpp::downCast<Declaration_listContext *>(_localctx)->dl_list =  antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText() + antlrcpp::downCast<Declaration_listContext *>(_localctx)->lthirdToken->getText() + antlrcpp::downCast<Declaration_listContext *>(_localctx)->const_intToken->getText() + antlrcpp::downCast<Declaration_listContext *>(_localctx)->rthirdToken->getText();
@@ -1799,6 +1808,7 @@ C8086Parser::Declaration_listContext* C8086Parser::declaration_list(int preceden
                     			bool inserted = symbolTable->insert(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText(),data_type);
                     			if(!inserted) {
                     				writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText() + "\n");
+                    				writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText() + "\n");
                     				err_count++;
                     			}
                     			antlrcpp::downCast<Declaration_listContext *>(_localctx)->dl_list =  antlrcpp::downCast<Declaration_listContext *>(_localctx)->dl->dl_list + "," + antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText();
@@ -1829,6 +1839,7 @@ C8086Parser::Declaration_listContext* C8086Parser::declaration_list(int preceden
                     			bool inserted = symbolTable->insert(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText(),data_type + " array");
                     			if(!inserted) {
                     				writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText() + "\n");
+                    				writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getLine()) + ": Multiple declaration of " + antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText() + "\n");
                     				err_count++;
                     			}
                     			antlrcpp::downCast<Declaration_listContext *>(_localctx)->dl_list =  antlrcpp::downCast<Declaration_listContext *>(_localctx)->dl->dl_list + "," + antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText() + antlrcpp::downCast<Declaration_listContext *>(_localctx)->lthirdToken->getText() + antlrcpp::downCast<Declaration_listContext *>(_localctx)->cn->getText() + antlrcpp::downCast<Declaration_listContext *>(_localctx)->rthirdToken->getText();
@@ -1915,6 +1926,7 @@ C8086Parser::StatementsContext* C8086Parser::statements(int precedence) {
     setState(224);
     antlrcpp::downCast<StatementsContext *>(_localctx)->st = statement();
 
+    		antlrcpp::downCast<StatementsContext *>(_localctx)->type =  antlrcpp::downCast<StatementsContext *>(_localctx)->st->type;
     		antlrcpp::downCast<StatementsContext *>(_localctx)->stmts_text =  antlrcpp::downCast<StatementsContext *>(_localctx)->st->st_text + "\n";
     		writeIntoparserLogFile("Line " + to_string((antlrcpp::downCast<StatementsContext *>(_localctx)->st != nullptr ? (antlrcpp::downCast<StatementsContext *>(_localctx)->st->stop) : nullptr)->getLine()) + ": statements : statement\n");
     		writeIntoparserLogFile(_localctx->stmts_text);
@@ -2203,6 +2215,7 @@ C8086Parser::StatementContext* C8086Parser::statement() {
       		SymbolInfo* temp = symbolTable->LookUp(antlrcpp::downCast<StatementContext *>(_localctx)->idToken->getText());
       		if (temp == NULL) {
       			writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<StatementContext *>(_localctx)->semicolonToken->getLine()) + ": Undeclared variable " + antlrcpp::downCast<StatementContext *>(_localctx)->idToken->getText() + "\n");
+      			writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<StatementContext *>(_localctx)->semicolonToken->getLine()) + ": Undeclared variable " + antlrcpp::downCast<StatementContext *>(_localctx)->idToken->getText() + "\n");
       			err_count++;
       		}
       		writeIntoparserLogFile(_localctx->st_text + "\n");
@@ -2222,6 +2235,7 @@ C8086Parser::StatementContext* C8086Parser::statement() {
       		antlrcpp::downCast<StatementContext *>(_localctx)->st_text =  antlrcpp::downCast<StatementContext *>(_localctx)->returnToken->getText() + " " + antlrcpp::downCast<StatementContext *>(_localctx)->expr->expr_text + antlrcpp::downCast<StatementContext *>(_localctx)->semicolonToken->getText();
       		writeIntoparserLogFile("Line " + to_string(antlrcpp::downCast<StatementContext *>(_localctx)->semicolonToken->getLine()) + ": statement : RETURN expression SEMICOLON\n");
       		writeIntoparserLogFile(_localctx->st_text + "\n");
+      		antlrcpp::downCast<StatementContext *>(_localctx)->type =  "return";
       	  
       break;
     }
@@ -2391,19 +2405,21 @@ C8086Parser::VariableContext* C8086Parser::variable() {
       antlrcpp::downCast<VariableContext *>(_localctx)->idToken = match(C8086Parser::ID);
 
       		data_type = symbolTable->getType(antlrcpp::downCast<VariableContext *>(_localctx)->idToken->getText());
-      		type2 = data_type;
+      		antlrcpp::downCast<VariableContext *>(_localctx)->type =  data_type;
       		string suffix="";
-      		if(data_type.length() >= 5){
-      			suffix = data_type.substr(data_type.length() - 5);
+      		if(data_type.length() >= 6){
+      			suffix = data_type.substr(data_type.length() - 6);
       		}
       		antlrcpp::downCast<VariableContext *>(_localctx)->var_text =  antlrcpp::downCast<VariableContext *>(_localctx)->idToken->getText();
       		writeIntoparserLogFile("Line " + to_string(antlrcpp::downCast<VariableContext *>(_localctx)->idToken->getLine()) + ": variable : ID\n");
       		if(data_type == "") {
       			writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<VariableContext *>(_localctx)->idToken->getLine()) + ": Undeclared variable " + antlrcpp::downCast<VariableContext *>(_localctx)->idToken->getText() + "\n");
+      			writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<VariableContext *>(_localctx)->idToken->getLine()) + ": Undeclared variable " + antlrcpp::downCast<VariableContext *>(_localctx)->idToken->getText() + "\n");
       			err_count++;
       		}
-      		else if (suffix == "array") {
+      		else if (suffix == " array") {
       			writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<VariableContext *>(_localctx)->idToken->getLine()) + ": Type mismatch, " + antlrcpp::downCast<VariableContext *>(_localctx)->idToken->getText() + " is an array\n");
+      			writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<VariableContext *>(_localctx)->idToken->getLine()) + ": Type mismatch, " + antlrcpp::downCast<VariableContext *>(_localctx)->idToken->getText() + " is an array\n");
       			err_count++;
       		}
       		writeIntoparserLogFile(_localctx->var_text + "\n");
@@ -2425,19 +2441,23 @@ C8086Parser::VariableContext* C8086Parser::variable() {
       		data_type = symbolTable->getType(antlrcpp::downCast<VariableContext *>(_localctx)->idToken->getText());
       		antlrcpp::downCast<VariableContext *>(_localctx)->var_text =  antlrcpp::downCast<VariableContext *>(_localctx)->idToken->getText() + antlrcpp::downCast<VariableContext *>(_localctx)->lthirdToken->getText() + antlrcpp::downCast<VariableContext *>(_localctx)->ex->expr_text + antlrcpp::downCast<VariableContext *>(_localctx)->rthirdToken->getText();
       		string suffix="";
-      		if(data_type.length() >= 5){
-      			suffix = data_type.substr(data_type.length() - 5);
+      		if(data_type.length() >= 6){
+      			suffix = data_type.substr(data_type.length() - 6);
       		}
       		writeIntoparserLogFile("Line " + to_string(antlrcpp::downCast<VariableContext *>(_localctx)->rthirdToken->getLine()) + ": variable : ID LTHIRD expression RTHIRD\n");
-      		if (suffix != "array") {
+      		if (suffix != " array") {
       			writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<VariableContext *>(_localctx)->rthirdToken->getLine()) + ": " + antlrcpp::downCast<VariableContext *>(_localctx)->idToken->getText() + " not an array\n");
+      			writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<VariableContext *>(_localctx)->rthirdToken->getLine()) + ": " + antlrcpp::downCast<VariableContext *>(_localctx)->idToken->getText() + " not an array\n");
       			err_count++;
       		}
-      		if (type2 != "int") {
+      		if (antlrcpp::downCast<VariableContext *>(_localctx)->ex->type != "int") {
       			writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<VariableContext *>(_localctx)->rthirdToken->getLine()) + ": Expression inside third brackets not an integer\n");
+      			writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<VariableContext *>(_localctx)->rthirdToken->getLine()) + ": Expression inside third brackets not an integer\n");
       			err_count++;
       		}
       		writeIntoparserLogFile(_localctx->var_text + "\n");
+      		string element_type = data_type.substr(0, data_type.find(' '));
+      		antlrcpp::downCast<VariableContext *>(_localctx)->type =  element_type;
       	 
       break;
     }
@@ -2511,6 +2531,7 @@ C8086Parser::ExpressionContext* C8086Parser::expression() {
       setState(308);
       antlrcpp::downCast<ExpressionContext *>(_localctx)->logex = logic_expression();
 
+      		 antlrcpp::downCast<ExpressionContext *>(_localctx)->type =  antlrcpp::downCast<ExpressionContext *>(_localctx)->logex->type;
       		 antlrcpp::downCast<ExpressionContext *>(_localctx)->expr_text =  antlrcpp::downCast<ExpressionContext *>(_localctx)->logex->logic_text;
       		 writeIntoparserLogFile("Line " + to_string((antlrcpp::downCast<ExpressionContext *>(_localctx)->logex != nullptr ? (antlrcpp::downCast<ExpressionContext *>(_localctx)->logex->stop) : nullptr)->getLine()) + ": expression : logic_expression\n");
       		 writeIntoparserLogFile(_localctx->expr_text + "\n");
@@ -2529,18 +2550,24 @@ C8086Parser::ExpressionContext* C8086Parser::expression() {
 
       		 antlrcpp::downCast<ExpressionContext *>(_localctx)->expr_text =  antlrcpp::downCast<ExpressionContext *>(_localctx)->var->var_text + antlrcpp::downCast<ExpressionContext *>(_localctx)->assignopToken->getText() + antlrcpp::downCast<ExpressionContext *>(_localctx)->logex->logic_text;
       		 writeIntoparserLogFile("Line " + to_string((antlrcpp::downCast<ExpressionContext *>(_localctx)->logex != nullptr ? (antlrcpp::downCast<ExpressionContext *>(_localctx)->logex->stop) : nullptr)->getLine()) + ": expression : variable ASSIGNOP logic_expression\n");
+      		 data_type = antlrcpp::downCast<ExpressionContext *>(_localctx)->var->type;
       		 string element_type = data_type.substr(0, data_type.find(' '));
-      		 if (data_type != ""){
-      			if (element_type != type2) {
-      				if (data_type == "void" || type2 == "void") {
+      		 if (data_type != "" && antlrcpp::downCast<ExpressionContext *>(_localctx)->logex->type != "Undefined"){
+      			if (element_type != antlrcpp::downCast<ExpressionContext *>(_localctx)->logex->type) {
+      				if (data_type == "void" || antlrcpp::downCast<ExpressionContext *>(_localctx)->logex->type == "void") {
       					writeIntoparserLogFile("Error at line " + to_string((antlrcpp::downCast<ExpressionContext *>(_localctx)->logex != nullptr ? (antlrcpp::downCast<ExpressionContext *>(_localctx)->logex->stop) : nullptr)->getLine()) + ": Void function used in expression\n");
+      					writeIntoparserErrorFile("Error at line " + to_string((antlrcpp::downCast<ExpressionContext *>(_localctx)->logex != nullptr ? (antlrcpp::downCast<ExpressionContext *>(_localctx)->logex->stop) : nullptr)->getLine()) + ": Void function used in expression\n");
       					err_count++;
+      					if (data_type != "void") antlrcpp::downCast<ExpressionContext *>(_localctx)->type =  data_type;
+      					else if (antlrcpp::downCast<ExpressionContext *>(_localctx)->logex->type != "void") antlrcpp::downCast<ExpressionContext *>(_localctx)->type =  antlrcpp::downCast<ExpressionContext *>(_localctx)->logex->type;
+      					else antlrcpp::downCast<ExpressionContext *>(_localctx)->type =  "void";
       				}
       				else{
-      					if (data_type == "float" && type2 == "int") {
+      					if (data_type == "float" && antlrcpp::downCast<ExpressionContext *>(_localctx)->logex->type == "int") {
       					}
       					else{
       						writeIntoparserLogFile("Error at line " + to_string((antlrcpp::downCast<ExpressionContext *>(_localctx)->logex != nullptr ? (antlrcpp::downCast<ExpressionContext *>(_localctx)->logex->stop) : nullptr)->getLine()) + ": Type Mismatch\n");
+      						writeIntoparserErrorFile("Error at line " + to_string((antlrcpp::downCast<ExpressionContext *>(_localctx)->logex != nullptr ? (antlrcpp::downCast<ExpressionContext *>(_localctx)->logex->stop) : nullptr)->getLine()) + ": Type Mismatch\n");
       						err_count++;
       					}
       				}
@@ -2620,6 +2647,7 @@ C8086Parser::Logic_expressionContext* C8086Parser::logic_expression() {
       setState(318);
       antlrcpp::downCast<Logic_expressionContext *>(_localctx)->relex = rel_expression();
 
+      			antlrcpp::downCast<Logic_expressionContext *>(_localctx)->type =  antlrcpp::downCast<Logic_expressionContext *>(_localctx)->relex->type;
       			antlrcpp::downCast<Logic_expressionContext *>(_localctx)->logic_text =  antlrcpp::downCast<Logic_expressionContext *>(_localctx)->relex->rel_text;
       			writeIntoparserLogFile("Line " + to_string((antlrcpp::downCast<Logic_expressionContext *>(_localctx)->relex != nullptr ? (antlrcpp::downCast<Logic_expressionContext *>(_localctx)->relex->stop) : nullptr)->getLine()) + ": logic_expression : rel_expression\n");
       			writeIntoparserLogFile(_localctx->logic_text + "\n");
@@ -2712,6 +2740,7 @@ C8086Parser::Rel_expressionContext* C8086Parser::rel_expression() {
       setState(328);
       antlrcpp::downCast<Rel_expressionContext *>(_localctx)->smex = simple_expression(0);
 
+      		  antlrcpp::downCast<Rel_expressionContext *>(_localctx)->type =  antlrcpp::downCast<Rel_expressionContext *>(_localctx)->smex->type;
       		  antlrcpp::downCast<Rel_expressionContext *>(_localctx)->rel_text =  antlrcpp::downCast<Rel_expressionContext *>(_localctx)->smex->sim_text;
       		  writeIntoparserLogFile("Line " + to_string((antlrcpp::downCast<Rel_expressionContext *>(_localctx)->smex != nullptr ? (antlrcpp::downCast<Rel_expressionContext *>(_localctx)->smex->stop) : nullptr)->getLine()) + ": rel_expression : simple_expression\n");
       		  writeIntoparserLogFile(_localctx->rel_text + "\n");
@@ -2813,6 +2842,7 @@ C8086Parser::Simple_expressionContext* C8086Parser::simple_expression(int preced
     setState(339);
     antlrcpp::downCast<Simple_expressionContext *>(_localctx)->termContext = term(0);
 
+    			antlrcpp::downCast<Simple_expressionContext *>(_localctx)->type =  antlrcpp::downCast<Simple_expressionContext *>(_localctx)->termContext->type;
     			antlrcpp::downCast<Simple_expressionContext *>(_localctx)->sim_text =  antlrcpp::downCast<Simple_expressionContext *>(_localctx)->termContext->term_text;
     			writeIntoparserLogFile("Line " + to_string((antlrcpp::downCast<Simple_expressionContext *>(_localctx)->termContext != nullptr ? (antlrcpp::downCast<Simple_expressionContext *>(_localctx)->termContext->stop) : nullptr)->getLine()) + ": simple_expression : term\n");
     			writeIntoparserLogFile(_localctx->sim_text + "\n");
@@ -2837,6 +2867,8 @@ C8086Parser::Simple_expressionContext* C8086Parser::simple_expression(int preced
         setState(344);
         antlrcpp::downCast<Simple_expressionContext *>(_localctx)->termContext = term(0);
 
+                  			if(antlrcpp::downCast<Simple_expressionContext *>(_localctx)->smex->type == "float" || antlrcpp::downCast<Simple_expressionContext *>(_localctx)->termContext->type == "float") antlrcpp::downCast<Simple_expressionContext *>(_localctx)->type = "float";
+                  			else antlrcpp::downCast<Simple_expressionContext *>(_localctx)->type =  "int";
                   			antlrcpp::downCast<Simple_expressionContext *>(_localctx)->sim_text =  antlrcpp::downCast<Simple_expressionContext *>(_localctx)->smex->sim_text + antlrcpp::downCast<Simple_expressionContext *>(_localctx)->addopToken->getText() + antlrcpp::downCast<Simple_expressionContext *>(_localctx)->termContext->term_text;
                   			writeIntoparserLogFile("Line " + to_string((antlrcpp::downCast<Simple_expressionContext *>(_localctx)->termContext != nullptr ? (antlrcpp::downCast<Simple_expressionContext *>(_localctx)->termContext->stop) : nullptr)->getLine()) + ": simple_expression : simple_expression ADDOP term\n");
                   			writeIntoparserLogFile(_localctx->sim_text + "\n");
@@ -2919,7 +2951,7 @@ C8086Parser::TermContext* C8086Parser::term(int precedence) {
     setState(353);
     antlrcpp::downCast<TermContext *>(_localctx)->unex = unary_expression();
 
-    		type1 = type2;
+    		antlrcpp::downCast<TermContext *>(_localctx)->type =  antlrcpp::downCast<TermContext *>(_localctx)->unex->type;
     		antlrcpp::downCast<TermContext *>(_localctx)->term_text =  antlrcpp::downCast<TermContext *>(_localctx)->unex->unex_text;
     		writeIntoparserLogFile("Line " + to_string((antlrcpp::downCast<TermContext *>(_localctx)->unex != nullptr ? (antlrcpp::downCast<TermContext *>(_localctx)->unex->stop) : nullptr)->getLine()) + ": term : unary_expression\n");
     		writeIntoparserLogFile(_localctx->term_text + "\n");
@@ -2946,30 +2978,32 @@ C8086Parser::TermContext* C8086Parser::term(int precedence) {
 
                   		antlrcpp::downCast<TermContext *>(_localctx)->term_text =  antlrcpp::downCast<TermContext *>(_localctx)->t->term_text + antlrcpp::downCast<TermContext *>(_localctx)->mulopToken->getText() + antlrcpp::downCast<TermContext *>(_localctx)->unex->unex_text;
                   		writeIntoparserLogFile("Line " + to_string((antlrcpp::downCast<TermContext *>(_localctx)->unex != nullptr ? (antlrcpp::downCast<TermContext *>(_localctx)->unex->stop) : nullptr)->getLine()) + ": term : term MULOP unary_expression\n");
-                  		if (type1 != "int" || type2 != "int") {
+                  		if (antlrcpp::downCast<TermContext *>(_localctx)->t->type != "int" || antlrcpp::downCast<TermContext *>(_localctx)->unex->type != "int") {
                   			if (antlrcpp::downCast<TermContext *>(_localctx)->mulopToken->getText() == "%") {
                   				writeIntoparserLogFile("Error at line " + to_string((antlrcpp::downCast<TermContext *>(_localctx)->unex != nullptr ? (antlrcpp::downCast<TermContext *>(_localctx)->unex->stop) : nullptr)->getLine()) + ": Non-Integer operand on modulus operator\n");
+                  				writeIntoparserErrorFile("Error at line " + to_string((antlrcpp::downCast<TermContext *>(_localctx)->unex != nullptr ? (antlrcpp::downCast<TermContext *>(_localctx)->unex->stop) : nullptr)->getLine()) + ": Non-Integer operand on modulus operator\n");
                   				err_count++;
-                  				type2 = "int";
+                  				antlrcpp::downCast<TermContext *>(_localctx)->type =  "int";
                   			}
                   			else{
-                  				if(type1 == "void" || type2 == "void") {
+                  				if(antlrcpp::downCast<TermContext *>(_localctx)->t->type == "void" || antlrcpp::downCast<TermContext *>(_localctx)->unex->type == "void") {
                   					writeIntoparserLogFile("Error at line " + to_string((antlrcpp::downCast<TermContext *>(_localctx)->unex != nullptr ? (antlrcpp::downCast<TermContext *>(_localctx)->unex->stop) : nullptr)->getLine()) + ": Void function used in expression\n");
+                  					writeIntoparserErrorFile("Error at line " + to_string((antlrcpp::downCast<TermContext *>(_localctx)->unex != nullptr ? (antlrcpp::downCast<TermContext *>(_localctx)->unex->stop) : nullptr)->getLine()) + ": Void function used in expression\n");
                   					err_count++;
-                  					if(type1 != "void") type2=type1;
-                  					else if (type2 != "void") type1=type2;
+                  					if(antlrcpp::downCast<TermContext *>(_localctx)->t->type != "void") antlrcpp::downCast<TermContext *>(_localctx)->type =  antlrcpp::downCast<TermContext *>(_localctx)->t->type;
+                  					else if (antlrcpp::downCast<TermContext *>(_localctx)->unex->type != "void") antlrcpp::downCast<TermContext *>(_localctx)->type =  antlrcpp::downCast<TermContext *>(_localctx)->unex->type;
                   					else{
-                  						type1 = "int";
-                  						type2 = "int";
+                  						antlrcpp::downCast<TermContext *>(_localctx)->type =  "void";
                   					}
                   				}
-                  				type1 = "float";
-                  				type2 = "float";
+                  				else antlrcpp::downCast<TermContext *>(_localctx)->type =  "float";
                   			}
                   		}
                   		if (antlrcpp::downCast<TermContext *>(_localctx)->mulopToken->getText() == "%" && antlrcpp::downCast<TermContext *>(_localctx)->unex->unex_text == "0") {
                   			writeIntoparserLogFile("Error at line " + to_string((antlrcpp::downCast<TermContext *>(_localctx)->unex != nullptr ? (antlrcpp::downCast<TermContext *>(_localctx)->unex->stop) : nullptr)->getLine()) + ": Modulus by Zero\n");
+                  			writeIntoparserErrorFile("Error at line " + to_string((antlrcpp::downCast<TermContext *>(_localctx)->unex != nullptr ? (antlrcpp::downCast<TermContext *>(_localctx)->unex->stop) : nullptr)->getLine()) + ": Modulus by Zero\n");
                   			err_count++;
+                  			antlrcpp::downCast<TermContext *>(_localctx)->type =  antlrcpp::downCast<TermContext *>(_localctx)->t->type;
                   		}
                   		writeIntoparserLogFile(_localctx->term_text + "\n");
                   	  
@@ -3077,6 +3111,7 @@ C8086Parser::Unary_expressionContext* C8086Parser::unary_expression() {
         setState(374);
         antlrcpp::downCast<Unary_expressionContext *>(_localctx)->factorContext = factor();
 
+        			antlrcpp::downCast<Unary_expressionContext *>(_localctx)->type =  antlrcpp::downCast<Unary_expressionContext *>(_localctx)->factorContext->type;
         			antlrcpp::downCast<Unary_expressionContext *>(_localctx)->unex_text =  antlrcpp::downCast<Unary_expressionContext *>(_localctx)->factorContext->fact_text;
         			writeIntoparserLogFile("Line " + to_string((antlrcpp::downCast<Unary_expressionContext *>(_localctx)->factorContext != nullptr ? (antlrcpp::downCast<Unary_expressionContext *>(_localctx)->factorContext->stop) : nullptr)->getLine()) + ": unary_expression : factor\n");
         			writeIntoparserLogFile(_localctx->unex_text + "\n");
@@ -3205,24 +3240,34 @@ C8086Parser::FactorContext* C8086Parser::factor() {
       		Function* temp = symbolTable->getFunc(antlrcpp::downCast<FactorContext *>(_localctx)->idToken->getText());
       		if(temp == NULL) {
       			writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<FactorContext *>(_localctx)->rparenToken->getLine()) + ": Undefined function " + antlrcpp::downCast<FactorContext *>(_localctx)->idToken->getText() + "\n");
+      			writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<FactorContext *>(_localctx)->rparenToken->getLine()) + ": Undefined function " + antlrcpp::downCast<FactorContext *>(_localctx)->idToken->getText() + "\n");
       			err_count++;
+      			antlrcpp::downCast<FactorContext *>(_localctx)->type =  "Undefined";
       		}
       		else{
-      			vector <string> param_list = temp->getParamList();
-      			if (argument_types.size() != param_list.size()){
-      				writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<FactorContext *>(_localctx)->rparenToken->getLine()) + ": Total number of arguments mismatch with declaration in function " + antlrcpp::downCast<FactorContext *>(_localctx)->idToken->getText() + "\n");
-      				err_count++;
+      			string suffix="";
+      			if(data_type.length() >= 6){
+      				suffix = data_type.substr(data_type.length() - 6);
       			}
-      			else{
-      				for(int i=0;i<param_list.size();i++) {
-      					if(argument_types[i] != param_list[i]) {
-      						writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<FactorContext *>(_localctx)->rparenToken->getLine()) + ": " + to_string(i+1) + "th argument mismatch in function " + antlrcpp::downCast<FactorContext *>(_localctx)->idToken->getText() + "\n");
-      						err_count++;
-      						break;
+      			if (suffix != " array") {
+      				vector <string> param_list = temp->getParamList();
+      				if (argument_types.size() != param_list.size()){
+      					writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<FactorContext *>(_localctx)->rparenToken->getLine()) + ": Total number of arguments mismatch with declaration in function " + antlrcpp::downCast<FactorContext *>(_localctx)->idToken->getText() + "\n");
+      					writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<FactorContext *>(_localctx)->rparenToken->getLine()) + ": Total number of arguments mismatch with declaration in function " + antlrcpp::downCast<FactorContext *>(_localctx)->idToken->getText() + "\n");
+      					err_count++;
+      				}
+      				else{
+      					for(int i=0;i<param_list.size();i++) {
+      						if(argument_types[i] != param_list[i]) {
+      							writeIntoparserLogFile("Error at line " + to_string(antlrcpp::downCast<FactorContext *>(_localctx)->rparenToken->getLine()) + ": " + to_string(i+1) + "th argument mismatch in function " + antlrcpp::downCast<FactorContext *>(_localctx)->idToken->getText() + "\n");
+      							writeIntoparserErrorFile("Error at line " + to_string(antlrcpp::downCast<FactorContext *>(_localctx)->rparenToken->getLine()) + ": " + to_string(i+1) + "th argument mismatch in function " + antlrcpp::downCast<FactorContext *>(_localctx)->idToken->getText() + "\n");
+      							err_count++;
+      							break;
+      						}
       					}
       				}
       			}
-      			type2 = temp->getReturnType();
+      			antlrcpp::downCast<FactorContext *>(_localctx)->type =  temp->getReturnType();
       		}
 
       		writeIntoparserLogFile(_localctx->fact_text + "\n");
@@ -3252,7 +3297,7 @@ C8086Parser::FactorContext* C8086Parser::factor() {
       setState(393);
       antlrcpp::downCast<FactorContext *>(_localctx)->cn = match(C8086Parser::CONST_INT);
 
-      		type2 = "int";
+      		antlrcpp::downCast<FactorContext *>(_localctx)->type =  "int";
       		antlrcpp::downCast<FactorContext *>(_localctx)->fact_text =  antlrcpp::downCast<FactorContext *>(_localctx)->cn->getText();
       		writeIntoparserLogFile("Line " + to_string(antlrcpp::downCast<FactorContext *>(_localctx)->cn->getLine()) + ": factor : CONST_INT\n");
       		writeIntoparserLogFile(_localctx->fact_text + "\n");
@@ -3265,7 +3310,7 @@ C8086Parser::FactorContext* C8086Parser::factor() {
       setState(395);
       antlrcpp::downCast<FactorContext *>(_localctx)->cn = match(C8086Parser::CONST_FLOAT);
 
-      		type2 = "float";
+      		antlrcpp::downCast<FactorContext *>(_localctx)->type =  "float";
       		antlrcpp::downCast<FactorContext *>(_localctx)->fact_text =  antlrcpp::downCast<FactorContext *>(_localctx)->cn->getText();
       		writeIntoparserLogFile("Line " + to_string(antlrcpp::downCast<FactorContext *>(_localctx)->cn->getLine()) + ": factor : CONST_FLOAT\n");
       		writeIntoparserLogFile(_localctx->fact_text + "\n");
@@ -3462,7 +3507,7 @@ C8086Parser::ArgumentsContext* C8086Parser::arguments(int precedence) {
     			writeIntoparserLogFile("Line " + to_string((antlrcpp::downCast<ArgumentsContext *>(_localctx)->logex != nullptr ? (antlrcpp::downCast<ArgumentsContext *>(_localctx)->logex->stop) : nullptr)->getLine()) + ": arguments : logic_expression\n");
     			writeIntoparserLogFile(_localctx->arg_text + "\n");
 
-    			argument_types.push_back(type2);
+    			argument_types.push_back(antlrcpp::downCast<ArgumentsContext *>(_localctx)->logex->type);
     		  
     _ctx->stop = _input->LT(-1);
     setState(424);
@@ -3488,7 +3533,7 @@ C8086Parser::ArgumentsContext* C8086Parser::arguments(int precedence) {
                   			writeIntoparserLogFile("Line " + to_string((antlrcpp::downCast<ArgumentsContext *>(_localctx)->logex != nullptr ? (antlrcpp::downCast<ArgumentsContext *>(_localctx)->logex->stop) : nullptr)->getLine()) + ": arguments : arguments COMMA logic_expression\n");
                   			writeIntoparserLogFile(_localctx->arg_text + "\n");
 
-                  			argument_types.push_back(type2);
+                  			argument_types.push_back(antlrcpp::downCast<ArgumentsContext *>(_localctx)->logex->type);
                   		   
       }
       setState(426);

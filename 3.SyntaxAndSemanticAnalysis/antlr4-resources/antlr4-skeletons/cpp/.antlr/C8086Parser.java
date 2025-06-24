@@ -134,7 +134,7 @@ public class C8086Parser extends Parser {
 	        parserLogFile.flush();
 	    }
 
-	    void writeIntoErrorFile(const std::string message) {
+	    void writeIntoparserErrorFile(const std::string message) {
 	        if (!errorFile) {
 	            std::cout << "Error opening errorFile.txt" << std::endl;
 	            return;
@@ -570,11 +570,18 @@ public class C8086Parser extends Parser {
 				setState(112);
 				((Func_definitionContext)_localctx).cmst = compound_statement();
 
+							if(((Func_definitionContext)_localctx).cmst.type == "return" && ((Func_definitionContext)_localctx).ts.name_line == "void") {
+								writeIntoparserLogFile("Error at line " + to_string((((Func_definitionContext)_localctx).cmst!=null?(((Func_definitionContext)_localctx).cmst.stop):null)->getLine()) + ": Cannot return value from function " + ((Func_definitionContext)_localctx).fn.func_name_text + " with void return type\n");
+								writeIntoparserErrorFile("Error at line " + to_string((((Func_definitionContext)_localctx).cmst!=null?(((Func_definitionContext)_localctx).cmst.stop):null)->getLine()) + ": Cannot return value from function " + ((Func_definitionContext)_localctx).fn.func_name_text + " with void return type\n");
+								err_count++;
+							}
+
+							cur_func->clearParamList();
+
 							((Func_definitionContext)_localctx).func_def_text =  ((Func_definitionContext)_localctx).ts.name_line + " " + ((Func_definitionContext)_localctx).fn.func_name_text + ((Func_definitionContext)_localctx).LPAREN->getText() + ((Func_definitionContext)_localctx).pm.param_text + ((Func_definitionContext)_localctx).rp.rparen_text + ((Func_definitionContext)_localctx).cmst.cmst_text;
 							writeIntoparserLogFile("Line " + to_string((((Func_definitionContext)_localctx).cmst!=null?(((Func_definitionContext)_localctx).cmst.stop):null)->getLine()) + ": func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement\n");
 							writeIntoparserLogFile(_localctx.func_def_text);
 
-							cur_func->clearParamList();
 						
 				}
 				break;
@@ -941,6 +948,7 @@ public class C8086Parser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class Compound_statementContext extends ParserRuleContext {
 		public string cmst_text;
+		public string type;
 		public CurlybraceContext c;
 		public StatementsContext stmts;
 		public Token RCURL;
@@ -974,6 +982,7 @@ public class C8086Parser extends Parser {
 				setState(166);
 				((Compound_statementContext)_localctx).RCURL = match(RCURL);
 
+								((Compound_statementContext)_localctx).type =  ((Compound_statementContext)_localctx).stmts.type;
 								((Compound_statementContext)_localctx).cmst_text =  ((Compound_statementContext)_localctx).c.curl_text + "\n" + ((Compound_statementContext)_localctx).stmts.stmts_text + ((Compound_statementContext)_localctx).RCURL->getText();
 								writeIntoparserLogFile("Line " + to_string(((Compound_statementContext)_localctx).RCURL->getLine()) + ": compound_statement : LCURL statements RCURL\n");
 								writeIntoparserLogFile(_localctx.cmst_text + "\n");
@@ -1074,13 +1083,6 @@ public class C8086Parser extends Parser {
 				setState(182);
 				((Var_declarationContext)_localctx).sm = match(SEMICOLON);
 
-				        writeIntoErrorFile(
-				            std::string("Line# ") + std::to_string(((Var_declarationContext)_localctx).sm->getLine()) +
-				            " with error name: " + ((Var_declarationContext)_localctx).de.error_name +
-				            " - Syntax error at declaration list of variable declaration"
-				        );
-
-				        syntaxErrorCount++;
 				      
 				}
 				break;
@@ -1375,6 +1377,7 @@ public class C8086Parser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class StatementsContext extends ParserRuleContext {
 		public string stmts_text;
+		public string type;
 		public StatementsContext stmts;
 		public StatementContext st;
 		public StatementContext statement() {
@@ -1408,6 +1411,7 @@ public class C8086Parser extends Parser {
 			setState(224);
 			((StatementsContext)_localctx).st = statement();
 
+					((StatementsContext)_localctx).type =  ((StatementsContext)_localctx).st.type;
 					((StatementsContext)_localctx).stmts_text =  ((StatementsContext)_localctx).st.st_text + "\n";
 					writeIntoparserLogFile("Line " + to_string((((StatementsContext)_localctx).st!=null?(((StatementsContext)_localctx).st.stop):null)->getLine()) + ": statements : statement\n");
 					writeIntoparserLogFile(_localctx.stmts_text);
@@ -1458,6 +1462,7 @@ public class C8086Parser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class StatementContext extends ParserRuleContext {
 		public string st_text;
+		public string type;
 		public Var_declarationContext vd;
 		public Expression_statementContext exst;
 		public Compound_statementContext cs;
@@ -1685,6 +1690,7 @@ public class C8086Parser extends Parser {
 						((StatementContext)_localctx).st_text =  ((StatementContext)_localctx).RETURN->getText() + " " + ((StatementContext)_localctx).expr.expr_text + ((StatementContext)_localctx).SEMICOLON->getText();
 						writeIntoparserLogFile("Line " + to_string(((StatementContext)_localctx).SEMICOLON->getLine()) + ": statement : RETURN expression SEMICOLON\n");
 						writeIntoparserLogFile(_localctx.st_text + "\n");
+						((StatementContext)_localctx).type =  "return";
 					  
 				}
 				break;
@@ -1772,6 +1778,7 @@ public class C8086Parser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class VariableContext extends ParserRuleContext {
 		public string var_text;
+		public string type;
 		public Token ID;
 		public Token LTHIRD;
 		public ExpressionContext ex;
@@ -1802,10 +1809,10 @@ public class C8086Parser extends Parser {
 				((VariableContext)_localctx).ID = match(ID);
 
 						data_type = symbolTable->getType(((VariableContext)_localctx).ID->getText());
-						type2 = data_type;
+						((VariableContext)_localctx).type =  data_type;
 						string suffix="";
-						if(data_type.length() >= 5){
-							suffix = data_type.substr(data_type.length() - 5);
+						if(data_type.length() >= 6){
+							suffix = data_type.substr(data_type.length() - 6);
 						}
 						((VariableContext)_localctx).var_text =  ((VariableContext)_localctx).ID->getText();
 						writeIntoparserLogFile("Line " + to_string(((VariableContext)_localctx).ID->getLine()) + ": variable : ID\n");
@@ -1814,7 +1821,7 @@ public class C8086Parser extends Parser {
 							writeIntoparserErrorFile("Error at line " + to_string(((VariableContext)_localctx).ID->getLine()) + ": Undeclared variable " + ((VariableContext)_localctx).ID->getText() + "\n");
 							err_count++;
 						}
-						else if (suffix == "array") {
+						else if (suffix == " array") {
 							writeIntoparserLogFile("Error at line " + to_string(((VariableContext)_localctx).ID->getLine()) + ": Type mismatch, " + ((VariableContext)_localctx).ID->getText() + " is an array\n");
 							writeIntoparserErrorFile("Error at line " + to_string(((VariableContext)_localctx).ID->getLine()) + ": Type mismatch, " + ((VariableContext)_localctx).ID->getText() + " is an array\n");
 							err_count++;
@@ -1838,21 +1845,23 @@ public class C8086Parser extends Parser {
 						data_type = symbolTable->getType(((VariableContext)_localctx).ID->getText());
 						((VariableContext)_localctx).var_text =  ((VariableContext)_localctx).ID->getText() + ((VariableContext)_localctx).LTHIRD->getText() + ((VariableContext)_localctx).ex.expr_text + ((VariableContext)_localctx).RTHIRD->getText();
 						string suffix="";
-						if(data_type.length() >= 5){
-							suffix = data_type.substr(data_type.length() - 5);
+						if(data_type.length() >= 6){
+							suffix = data_type.substr(data_type.length() - 6);
 						}
 						writeIntoparserLogFile("Line " + to_string(((VariableContext)_localctx).RTHIRD->getLine()) + ": variable : ID LTHIRD expression RTHIRD\n");
-						if (suffix != "array") {
+						if (suffix != " array") {
 							writeIntoparserLogFile("Error at line " + to_string(((VariableContext)_localctx).RTHIRD->getLine()) + ": " + ((VariableContext)_localctx).ID->getText() + " not an array\n");
 							writeIntoparserErrorFile("Error at line " + to_string(((VariableContext)_localctx).RTHIRD->getLine()) + ": " + ((VariableContext)_localctx).ID->getText() + " not an array\n");
 							err_count++;
 						}
-						if (type2 != "int") {
+						if (((VariableContext)_localctx).ex.type != "int") {
 							writeIntoparserLogFile("Error at line " + to_string(((VariableContext)_localctx).RTHIRD->getLine()) + ": Expression inside third brackets not an integer\n");
 							writeIntoparserErrorFile("Error at line " + to_string(((VariableContext)_localctx).RTHIRD->getLine()) + ": Expression inside third brackets not an integer\n");
 							err_count++;
 						}
 						writeIntoparserLogFile(_localctx.var_text + "\n");
+						string element_type = data_type.substr(0, data_type.find(' '));
+						((VariableContext)_localctx).type =  element_type;
 					 
 				}
 				break;
@@ -1872,6 +1881,7 @@ public class C8086Parser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class ExpressionContext extends ParserRuleContext {
 		public string expr_text;
+		public string type;
 		public Logic_expressionContext logex;
 		public VariableContext var;
 		public Token ASSIGNOP;
@@ -1901,6 +1911,7 @@ public class C8086Parser extends Parser {
 				setState(308);
 				((ExpressionContext)_localctx).logex = logic_expression();
 
+						 ((ExpressionContext)_localctx).type =  ((ExpressionContext)_localctx).logex.type;
 						 ((ExpressionContext)_localctx).expr_text =  ((ExpressionContext)_localctx).logex.logic_text;
 						 writeIntoparserLogFile("Line " + to_string((((ExpressionContext)_localctx).logex!=null?(((ExpressionContext)_localctx).logex.stop):null)->getLine()) + ": expression : logic_expression\n");
 						 writeIntoparserLogFile(_localctx.expr_text + "\n");
@@ -1919,16 +1930,20 @@ public class C8086Parser extends Parser {
 
 						 ((ExpressionContext)_localctx).expr_text =  ((ExpressionContext)_localctx).var.var_text + ((ExpressionContext)_localctx).ASSIGNOP->getText() + ((ExpressionContext)_localctx).logex.logic_text;
 						 writeIntoparserLogFile("Line " + to_string((((ExpressionContext)_localctx).logex!=null?(((ExpressionContext)_localctx).logex.stop):null)->getLine()) + ": expression : variable ASSIGNOP logic_expression\n");
+						 data_type = ((ExpressionContext)_localctx).var.type;
 						 string element_type = data_type.substr(0, data_type.find(' '));
-						 if (data_type != ""){
-							if (element_type != type2) {
-								if (data_type == "void" || type2 == "void") {
+						 if (data_type != "" && ((ExpressionContext)_localctx).logex.type != "Undefined"){
+							if (element_type != ((ExpressionContext)_localctx).logex.type) {
+								if (data_type == "void" || ((ExpressionContext)_localctx).logex.type == "void") {
 									writeIntoparserLogFile("Error at line " + to_string((((ExpressionContext)_localctx).logex!=null?(((ExpressionContext)_localctx).logex.stop):null)->getLine()) + ": Void function used in expression\n");
 									writeIntoparserErrorFile("Error at line " + to_string((((ExpressionContext)_localctx).logex!=null?(((ExpressionContext)_localctx).logex.stop):null)->getLine()) + ": Void function used in expression\n");
 									err_count++;
+									if (data_type != "void") ((ExpressionContext)_localctx).type =  data_type;
+									else if (((ExpressionContext)_localctx).logex.type != "void") ((ExpressionContext)_localctx).type =  ((ExpressionContext)_localctx).logex.type;
+									else ((ExpressionContext)_localctx).type =  "void";
 								}
 								else{
-									if (data_type == "float" && type2 == "int") {
+									if (data_type == "float" && ((ExpressionContext)_localctx).logex.type == "int") {
 									}
 									else{
 										writeIntoparserLogFile("Error at line " + to_string((((ExpressionContext)_localctx).logex!=null?(((ExpressionContext)_localctx).logex.stop):null)->getLine()) + ": Type Mismatch\n");
@@ -1958,6 +1973,7 @@ public class C8086Parser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class Logic_expressionContext extends ParserRuleContext {
 		public string logic_text;
+		public string type;
 		public Rel_expressionContext relex;
 		public Rel_expressionContext relex1;
 		public Token LOGICOP;
@@ -1988,6 +2004,7 @@ public class C8086Parser extends Parser {
 				setState(318);
 				((Logic_expressionContext)_localctx).relex = rel_expression();
 
+							((Logic_expressionContext)_localctx).type =  ((Logic_expressionContext)_localctx).relex.type;
 							((Logic_expressionContext)_localctx).logic_text =  ((Logic_expressionContext)_localctx).relex.rel_text;
 							writeIntoparserLogFile("Line " + to_string((((Logic_expressionContext)_localctx).relex!=null?(((Logic_expressionContext)_localctx).relex.stop):null)->getLine()) + ": logic_expression : rel_expression\n");
 							writeIntoparserLogFile(_localctx.logic_text + "\n");
@@ -2026,6 +2043,7 @@ public class C8086Parser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class Rel_expressionContext extends ParserRuleContext {
 		public string rel_text;
+		public string type;
 		public Simple_expressionContext smex;
 		public Simple_expressionContext smex1;
 		public Token RELOP;
@@ -2056,6 +2074,7 @@ public class C8086Parser extends Parser {
 				setState(328);
 				((Rel_expressionContext)_localctx).smex = simple_expression(0);
 
+						  ((Rel_expressionContext)_localctx).type =  ((Rel_expressionContext)_localctx).smex.type;
 						  ((Rel_expressionContext)_localctx).rel_text =  ((Rel_expressionContext)_localctx).smex.sim_text;
 						  writeIntoparserLogFile("Line " + to_string((((Rel_expressionContext)_localctx).smex!=null?(((Rel_expressionContext)_localctx).smex.stop):null)->getLine()) + ": rel_expression : simple_expression\n");
 						  writeIntoparserLogFile(_localctx.rel_text + "\n");
@@ -2094,6 +2113,7 @@ public class C8086Parser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class Simple_expressionContext extends ParserRuleContext {
 		public string sim_text;
+		public string type;
 		public Simple_expressionContext smex;
 		public TermContext term;
 		public Token ADDOP;
@@ -2129,6 +2149,7 @@ public class C8086Parser extends Parser {
 			setState(339);
 			((Simple_expressionContext)_localctx).term = term(0);
 
+						((Simple_expressionContext)_localctx).type =  ((Simple_expressionContext)_localctx).term.type;
 						((Simple_expressionContext)_localctx).sim_text =  ((Simple_expressionContext)_localctx).term.term_text;
 						writeIntoparserLogFile("Line " + to_string((((Simple_expressionContext)_localctx).term!=null?(((Simple_expressionContext)_localctx).term.stop):null)->getLine()) + ": simple_expression : term\n");
 						writeIntoparserLogFile(_localctx.sim_text + "\n");
@@ -2154,6 +2175,8 @@ public class C8086Parser extends Parser {
 					setState(344);
 					((Simple_expressionContext)_localctx).term = term(0);
 
+					          			if(((Simple_expressionContext)_localctx).smex.type == "float" || ((Simple_expressionContext)_localctx).term.type == "float") ((Simple_expressionContext)_localctx).type = "float";
+					          			else ((Simple_expressionContext)_localctx).type =  "int";
 					          			((Simple_expressionContext)_localctx).sim_text =  ((Simple_expressionContext)_localctx).smex.sim_text + ((Simple_expressionContext)_localctx).ADDOP->getText() + ((Simple_expressionContext)_localctx).term.term_text;
 					          			writeIntoparserLogFile("Line " + to_string((((Simple_expressionContext)_localctx).term!=null?(((Simple_expressionContext)_localctx).term.stop):null)->getLine()) + ": simple_expression : simple_expression ADDOP term\n");
 					          			writeIntoparserLogFile(_localctx.sim_text + "\n");
@@ -2181,6 +2204,7 @@ public class C8086Parser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class TermContext extends ParserRuleContext {
 		public string term_text;
+		public string type;
 		public TermContext t;
 		public Unary_expressionContext unex;
 		public Token MULOP;
@@ -2216,7 +2240,7 @@ public class C8086Parser extends Parser {
 			setState(353);
 			((TermContext)_localctx).unex = unary_expression();
 
-					type1 = type2;
+					((TermContext)_localctx).type =  ((TermContext)_localctx).unex.type;
 					((TermContext)_localctx).term_text =  ((TermContext)_localctx).unex.unex_text;
 					writeIntoparserLogFile("Line " + to_string((((TermContext)_localctx).unex!=null?(((TermContext)_localctx).unex.stop):null)->getLine()) + ": term : unary_expression\n");
 					writeIntoparserLogFile(_localctx.term_text + "\n");
@@ -2244,33 +2268,32 @@ public class C8086Parser extends Parser {
 
 					          		((TermContext)_localctx).term_text =  ((TermContext)_localctx).t.term_text + ((TermContext)_localctx).MULOP->getText() + ((TermContext)_localctx).unex.unex_text;
 					          		writeIntoparserLogFile("Line " + to_string((((TermContext)_localctx).unex!=null?(((TermContext)_localctx).unex.stop):null)->getLine()) + ": term : term MULOP unary_expression\n");
-					          		if (type1 != "int" || type2 != "int") {
+					          		if (((TermContext)_localctx).t.type != "int" || ((TermContext)_localctx).unex.type != "int") {
 					          			if (((TermContext)_localctx).MULOP->getText() == "%") {
 					          				writeIntoparserLogFile("Error at line " + to_string((((TermContext)_localctx).unex!=null?(((TermContext)_localctx).unex.stop):null)->getLine()) + ": Non-Integer operand on modulus operator\n");
 					          				writeIntoparserErrorFile("Error at line " + to_string((((TermContext)_localctx).unex!=null?(((TermContext)_localctx).unex.stop):null)->getLine()) + ": Non-Integer operand on modulus operator\n");
 					          				err_count++;
-					          				type2 = "int";
+					          				((TermContext)_localctx).type =  "int";
 					          			}
 					          			else{
-					          				if(type1 == "void" || type2 == "void") {
+					          				if(((TermContext)_localctx).t.type == "void" || ((TermContext)_localctx).unex.type == "void") {
 					          					writeIntoparserLogFile("Error at line " + to_string((((TermContext)_localctx).unex!=null?(((TermContext)_localctx).unex.stop):null)->getLine()) + ": Void function used in expression\n");
 					          					writeIntoparserErrorFile("Error at line " + to_string((((TermContext)_localctx).unex!=null?(((TermContext)_localctx).unex.stop):null)->getLine()) + ": Void function used in expression\n");
 					          					err_count++;
-					          					if(type1 != "void") type2=type1;
-					          					else if (type2 != "void") type1=type2;
+					          					if(((TermContext)_localctx).t.type != "void") ((TermContext)_localctx).type =  ((TermContext)_localctx).t.type;
+					          					else if (((TermContext)_localctx).unex.type != "void") ((TermContext)_localctx).type =  ((TermContext)_localctx).unex.type;
 					          					else{
-					          						type1 = "int";
-					          						type2 = "int";
+					          						((TermContext)_localctx).type =  "void";
 					          					}
 					          				}
-					          				type1 = "float";
-					          				type2 = "float";
+					          				else ((TermContext)_localctx).type =  "float";
 					          			}
 					          		}
 					          		if (((TermContext)_localctx).MULOP->getText() == "%" && ((TermContext)_localctx).unex.unex_text == "0") {
 					          			writeIntoparserLogFile("Error at line " + to_string((((TermContext)_localctx).unex!=null?(((TermContext)_localctx).unex.stop):null)->getLine()) + ": Modulus by Zero\n");
 					          			writeIntoparserErrorFile("Error at line " + to_string((((TermContext)_localctx).unex!=null?(((TermContext)_localctx).unex.stop):null)->getLine()) + ": Modulus by Zero\n");
 					          			err_count++;
+					          			((TermContext)_localctx).type =  ((TermContext)_localctx).t.type;
 					          		}
 					          		writeIntoparserLogFile(_localctx.term_text + "\n");
 					          	 
@@ -2297,6 +2320,7 @@ public class C8086Parser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class Unary_expressionContext extends ParserRuleContext {
 		public string unex_text;
+		public string type;
 		public Token ADDOP;
 		public Unary_expressionContext unex;
 		public Token NOT;
@@ -2359,6 +2383,7 @@ public class C8086Parser extends Parser {
 				setState(374);
 				((Unary_expressionContext)_localctx).factor = factor();
 
+							((Unary_expressionContext)_localctx).type =  ((Unary_expressionContext)_localctx).factor.type;
 							((Unary_expressionContext)_localctx).unex_text =  ((Unary_expressionContext)_localctx).factor.fact_text;
 							writeIntoparserLogFile("Line " + to_string((((Unary_expressionContext)_localctx).factor!=null?(((Unary_expressionContext)_localctx).factor.stop):null)->getLine()) + ": unary_expression : factor\n");
 							writeIntoparserLogFile(_localctx.unex_text + "\n");
@@ -2383,6 +2408,7 @@ public class C8086Parser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class FactorContext extends ParserRuleContext {
 		public string fact_text;
+		public string type;
 		public VariableContext var;
 		public Token ID;
 		public Token LPAREN;
@@ -2453,25 +2479,32 @@ public class C8086Parser extends Parser {
 							writeIntoparserLogFile("Error at line " + to_string(((FactorContext)_localctx).RPAREN->getLine()) + ": Undefined function " + ((FactorContext)_localctx).ID->getText() + "\n");
 							writeIntoparserErrorFile("Error at line " + to_string(((FactorContext)_localctx).RPAREN->getLine()) + ": Undefined function " + ((FactorContext)_localctx).ID->getText() + "\n");
 							err_count++;
+							((FactorContext)_localctx).type =  "Undefined";
 						}
 						else{
-							vector <string> param_list = temp->getParamList();
-							if (argument_types.size() != param_list.size()){
-								writeIntoparserLogFile("Error at line " + to_string(((FactorContext)_localctx).RPAREN->getLine()) + ": Total number of arguments mismatch with declaration in function " + ((FactorContext)_localctx).ID->getText() + "\n");
-								writeIntoparserErrorFile("Error at line " + to_string(((FactorContext)_localctx).RPAREN->getLine()) + ": Total number of arguments mismatch with declaration in function " + ((FactorContext)_localctx).ID->getText() + "\n");
-								err_count++;
+							string suffix="";
+							if(data_type.length() >= 6){
+								suffix = data_type.substr(data_type.length() - 6);
 							}
-							else{
-								for(int i=0;i<param_list.size();i++) {
-									if(argument_types[i] != param_list[i]) {
-										writeIntoparserLogFile("Error at line " + to_string(((FactorContext)_localctx).RPAREN->getLine()) + ": " + to_string(i+1) + "th argument mismatch in function " + ((FactorContext)_localctx).ID->getText() + "\n");
-										writeIntoparserErrorFile("Error at line " + to_string(((FactorContext)_localctx).RPAREN->getLine()) + ": " + to_string(i+1) + "th argument mismatch in function " + ((FactorContext)_localctx).ID->getText() + "\n");
-										err_count++;
-										break;
+							if (suffix != " array") {
+								vector <string> param_list = temp->getParamList();
+								if (argument_types.size() != param_list.size()){
+									writeIntoparserLogFile("Error at line " + to_string(((FactorContext)_localctx).RPAREN->getLine()) + ": Total number of arguments mismatch with declaration in function " + ((FactorContext)_localctx).ID->getText() + "\n");
+									writeIntoparserErrorFile("Error at line " + to_string(((FactorContext)_localctx).RPAREN->getLine()) + ": Total number of arguments mismatch with declaration in function " + ((FactorContext)_localctx).ID->getText() + "\n");
+									err_count++;
+								}
+								else{
+									for(int i=0;i<param_list.size();i++) {
+										if(argument_types[i] != param_list[i]) {
+											writeIntoparserLogFile("Error at line " + to_string(((FactorContext)_localctx).RPAREN->getLine()) + ": " + to_string(i+1) + "th argument mismatch in function " + ((FactorContext)_localctx).ID->getText() + "\n");
+											writeIntoparserErrorFile("Error at line " + to_string(((FactorContext)_localctx).RPAREN->getLine()) + ": " + to_string(i+1) + "th argument mismatch in function " + ((FactorContext)_localctx).ID->getText() + "\n");
+											err_count++;
+											break;
+										}
 									}
 								}
 							}
-							type2 = temp->getReturnType();
+							((FactorContext)_localctx).type =  temp->getReturnType();
 						}
 
 						writeIntoparserLogFile(_localctx.fact_text + "\n");
@@ -2501,7 +2534,7 @@ public class C8086Parser extends Parser {
 				setState(393);
 				((FactorContext)_localctx).cn = match(CONST_INT);
 
-						type2 = "int";
+						((FactorContext)_localctx).type =  "int";
 						((FactorContext)_localctx).fact_text =  ((FactorContext)_localctx).cn->getText();
 						writeIntoparserLogFile("Line " + to_string(((FactorContext)_localctx).cn->getLine()) + ": factor : CONST_INT\n");
 						writeIntoparserLogFile(_localctx.fact_text + "\n");
@@ -2514,7 +2547,7 @@ public class C8086Parser extends Parser {
 				setState(395);
 				((FactorContext)_localctx).cn = match(CONST_FLOAT);
 
-						type2 = "float";
+						((FactorContext)_localctx).type =  "float";
 						((FactorContext)_localctx).fact_text =  ((FactorContext)_localctx).cn->getText();
 						writeIntoparserLogFile("Line " + to_string(((FactorContext)_localctx).cn->getLine()) + ": factor : CONST_FLOAT\n");
 						writeIntoparserLogFile(_localctx.fact_text + "\n");
@@ -2661,7 +2694,7 @@ public class C8086Parser extends Parser {
 						writeIntoparserLogFile("Line " + to_string((((ArgumentsContext)_localctx).logex!=null?(((ArgumentsContext)_localctx).logex.stop):null)->getLine()) + ": arguments : logic_expression\n");
 						writeIntoparserLogFile(_localctx.arg_text + "\n");
 
-						argument_types.push_back(type2);
+						argument_types.push_back(((ArgumentsContext)_localctx).logex.type);
 					  
 			}
 			_ctx.stop = _input.LT(-1);
@@ -2688,7 +2721,7 @@ public class C8086Parser extends Parser {
 					          			writeIntoparserLogFile("Line " + to_string((((ArgumentsContext)_localctx).logex!=null?(((ArgumentsContext)_localctx).logex.stop):null)->getLine()) + ": arguments : arguments COMMA logic_expression\n");
 					          			writeIntoparserLogFile(_localctx.arg_text + "\n");
 
-					          			argument_types.push_back(type2);
+					          			argument_types.push_back(((ArgumentsContext)_localctx).logex.type);
 					          		  
 					}
 					} 

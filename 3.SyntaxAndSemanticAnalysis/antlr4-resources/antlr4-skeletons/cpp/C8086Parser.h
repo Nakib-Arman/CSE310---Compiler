@@ -75,7 +75,7 @@ public:
           parserLogFile.flush();
       }
 
-      void writeIntoErrorFile(const std::string message) {
+      void writeIntoparserErrorFile(const std::string message) {
           if (!errorFile) {
               std::cout << "Error opening errorFile.txt" << std::endl;
               return;
@@ -310,6 +310,7 @@ public:
   class  Compound_statementContext : public antlr4::ParserRuleContext {
   public:
     string cmst_text;
+    string type;
     C8086Parser::CurlybraceContext *c = nullptr;
     C8086Parser::StatementsContext *stmts = nullptr;
     antlr4::Token *rcurlToken = nullptr;
@@ -407,6 +408,7 @@ public:
   class  StatementsContext : public antlr4::ParserRuleContext {
   public:
     string stmts_text;
+    string type;
     C8086Parser::StatementsContext *stmts = nullptr;
     C8086Parser::StatementContext *st = nullptr;
     StatementsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
@@ -424,6 +426,7 @@ public:
   class  StatementContext : public antlr4::ParserRuleContext {
   public:
     string st_text;
+    string type;
     C8086Parser::Var_declarationContext *vd = nullptr;
     C8086Parser::Expression_statementContext *exst = nullptr;
     C8086Parser::Compound_statementContext *cs = nullptr;
@@ -491,6 +494,7 @@ public:
   class  VariableContext : public antlr4::ParserRuleContext {
   public:
     string var_text;
+    string type;
     antlr4::Token *idToken = nullptr;
     antlr4::Token *lthirdToken = nullptr;
     C8086Parser::ExpressionContext *ex = nullptr;
@@ -512,6 +516,7 @@ public:
   class  ExpressionContext : public antlr4::ParserRuleContext {
   public:
     string expr_text;
+    string type;
     C8086Parser::Logic_expressionContext *logex = nullptr;
     C8086Parser::VariableContext *var = nullptr;
     antlr4::Token *assignopToken = nullptr;
@@ -531,6 +536,7 @@ public:
   class  Logic_expressionContext : public antlr4::ParserRuleContext {
   public:
     string logic_text;
+    string type;
     C8086Parser::Rel_expressionContext *relex = nullptr;
     C8086Parser::Rel_expressionContext *relex1 = nullptr;
     antlr4::Token *logicopToken = nullptr;
@@ -551,6 +557,7 @@ public:
   class  Rel_expressionContext : public antlr4::ParserRuleContext {
   public:
     string rel_text;
+    string type;
     C8086Parser::Simple_expressionContext *smex = nullptr;
     C8086Parser::Simple_expressionContext *smex1 = nullptr;
     antlr4::Token *relopToken = nullptr;
@@ -571,6 +578,7 @@ public:
   class  Simple_expressionContext : public antlr4::ParserRuleContext {
   public:
     string sim_text;
+    string type;
     C8086Parser::Simple_expressionContext *smex = nullptr;
     C8086Parser::TermContext *termContext = nullptr;
     antlr4::Token *addopToken = nullptr;
@@ -590,6 +598,7 @@ public:
   class  TermContext : public antlr4::ParserRuleContext {
   public:
     string term_text;
+    string type;
     C8086Parser::TermContext *t = nullptr;
     C8086Parser::Unary_expressionContext *unex = nullptr;
     antlr4::Token *mulopToken = nullptr;
@@ -609,6 +618,7 @@ public:
   class  Unary_expressionContext : public antlr4::ParserRuleContext {
   public:
     string unex_text;
+    string type;
     antlr4::Token *addopToken = nullptr;
     C8086Parser::Unary_expressionContext *unex = nullptr;
     antlr4::Token *notToken = nullptr;
@@ -630,6 +640,7 @@ public:
   class  FactorContext : public antlr4::ParserRuleContext {
   public:
     string fact_text;
+    string type;
     C8086Parser::VariableContext *var = nullptr;
     antlr4::Token *idToken = nullptr;
     antlr4::Token *lparenToken = nullptr;

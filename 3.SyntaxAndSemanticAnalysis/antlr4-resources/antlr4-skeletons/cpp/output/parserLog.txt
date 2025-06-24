@@ -1008,6 +1008,8 @@ ScopeTable # 1
  12 --> < foo : ID > 
  14 --> < func : ID > 
 
+Error at line 38: Cannot return value from function foo4 with void return type
+
 Line 38: func_definition : type_specifier ID LPAREN parameter_list RPAREN compound_statement
 
 void foo4(int a){
@@ -1324,8 +1326,6 @@ Line 48: argument_list : arguments
 a,c
 
 Line 48: factor : ID LPAREN argument_list RPAREN
-
-Error at line 48: 2th argument mismatch in function correct_foo
 
 correct_foo(a,c)
 
@@ -1806,8 +1806,6 @@ Line 54: logic_expression : rel_expression
 2+5*foo4(7)
 
 Line 54: expression : variable ASSIGNOP logic_expression
-
-Error at line 54: Type Mismatch
 
 c[0]=2+5*foo4(7)
 
@@ -2752,4 +2750,4 @@ ScopeTable # 1
  14 --> < func : ID > 
 
 Total number of lines: 71
-Total number of errors: 22
+Total number of errors: 21
