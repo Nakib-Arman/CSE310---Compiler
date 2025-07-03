@@ -1,0 +1,3 @@
+$st_text = $FOR->getText() + $LPAREN->getText() + $es1.expr_stmt_text + $es2.expr_stmt_text + $ex.expr_text + $RPAREN->getText() + $st.st_text;
+		writeIntoparserLogFile("Line " + to_string($st.stop->getLine()) + ": statement : FOR LPAREN expression_statement expression_statement expression RPAREN statement\n");
+		writeIntoparserLogFile($st_text + "\n");

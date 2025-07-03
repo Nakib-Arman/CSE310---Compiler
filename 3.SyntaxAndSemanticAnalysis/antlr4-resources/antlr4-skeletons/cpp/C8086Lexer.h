@@ -22,10 +22,11 @@ public:
   enum {
     LINE_COMMENT = 1, BLOCK_COMMENT = 2, STRING = 3, WS = 4, IF = 5, ELSE = 6, 
     FOR = 7, WHILE = 8, PRINTLN = 9, RETURN = 10, INT = 11, FLOAT = 12, 
-    VOID = 13, LPAREN = 14, RPAREN = 15, LCURL = 16, RCURL = 17, LTHIRD = 18, 
-    RTHIRD = 19, SEMICOLON = 20, COMMA = 21, ADDOP = 22, SUBOP = 23, MULOP = 24, 
-    INCOP = 25, DECOP = 26, NOT = 27, RELOP = 28, LOGICOP = 29, ASSIGNOP = 30, 
-    HASH = 31, ID = 32, CONST_INT = 33, CONST_FLOAT = 34
+    VOID = 13, IN = 14, FORIN = 15, FOREACH = 16, TO = 17, WHEN = 18, PRINT = 19, 
+    ARROW = 20, LPAREN = 21, RPAREN = 22, LCURL = 23, RCURL = 24, LTHIRD = 25, 
+    RTHIRD = 26, SEMICOLON = 27, COMMA = 28, QMARK = 29, COLON = 30, ADDOP = 31, 
+    SUBOP = 32, MULOP = 33, INCOP = 34, DECOP = 35, NOT = 36, RELOP = 37, 
+    LOGICOP = 38, ASSIGNOP = 39, HASH = 40, ID = 41, CONST_INT = 42, CONST_FLOAT = 43
   };
 
   explicit C8086Lexer(antlr4::CharStream *input);
@@ -82,6 +83,13 @@ private:
   void INTAction(antlr4::RuleContext *context, size_t actionIndex);
   void FLOATAction(antlr4::RuleContext *context, size_t actionIndex);
   void VOIDAction(antlr4::RuleContext *context, size_t actionIndex);
+  void INAction(antlr4::RuleContext *context, size_t actionIndex);
+  void FORINAction(antlr4::RuleContext *context, size_t actionIndex);
+  void FOREACHAction(antlr4::RuleContext *context, size_t actionIndex);
+  void TOAction(antlr4::RuleContext *context, size_t actionIndex);
+  void WHENAction(antlr4::RuleContext *context, size_t actionIndex);
+  void PRINTAction(antlr4::RuleContext *context, size_t actionIndex);
+  void ARROWAction(antlr4::RuleContext *context, size_t actionIndex);
   void LPARENAction(antlr4::RuleContext *context, size_t actionIndex);
   void RPARENAction(antlr4::RuleContext *context, size_t actionIndex);
   void LCURLAction(antlr4::RuleContext *context, size_t actionIndex);
@@ -90,6 +98,8 @@ private:
   void RTHIRDAction(antlr4::RuleContext *context, size_t actionIndex);
   void SEMICOLONAction(antlr4::RuleContext *context, size_t actionIndex);
   void COMMAAction(antlr4::RuleContext *context, size_t actionIndex);
+  void QMARKAction(antlr4::RuleContext *context, size_t actionIndex);
+  void COLONAction(antlr4::RuleContext *context, size_t actionIndex);
   void ADDOPAction(antlr4::RuleContext *context, size_t actionIndex);
   void SUBOPAction(antlr4::RuleContext *context, size_t actionIndex);
   void MULOPAction(antlr4::RuleContext *context, size_t actionIndex);
