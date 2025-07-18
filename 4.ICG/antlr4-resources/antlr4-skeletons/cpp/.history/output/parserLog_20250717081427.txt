@@ -1,0 +1,90 @@
+.MODEL SMALL
+.STACK 100H
+
+.DATA
+	i DW 1 DUP (0000H)
+	j DW 1 DUP (0000H)
+.CODE
+main PROC
+	MOV AX, @DATA
+	MOV DS, AX
+	PUSH BP
+	MOV BP, SP
+	SUB SP, 2
+	SUB SP, 2
+	SUB SP, 2
+	SUB SP, 2
+	SUB SP, 2
+	SUB SP, 2
+
+	MOV AX, 1
+	MOV i, AX
+
+	MOV AX, i
+	CALL print_output
+	CALL new_line     ; Line 7
+
+	MOV AX, 5
+	MOV DX, AX
+	MOV AX, 8
+	ADD AX,DX
+	MOV j, AX
+
+	MOV AX, j
+	CALL print_output
+	CALL new_line     ; Line 10
+
+	MOV DX, AX
+	MOV AX, 2
+	ADD AX,DX
+	MOV k, AX
+
+	MOV AX, k
+	CALL print_output
+	CALL new_line     ; Line 13
+
+	MOV AX, 9
+	MOV m, AX
+
+	MOV AX, m
+	CALL print_output
+	CALL new_line     ; Line 16
+
+	MOV n, AX
+
+	MOV AX, n
+	CALL print_output
+	CALL new_line     ; Line 19
+
+	MOV o, AX
+
+	MOV AX, o
+	CALL print_output
+	CALL new_line     ; Line 22
+
+	MOV p, AX
+
+	MOV AX, p
+	CALL print_output
+	CALL new_line     ; Line 25
+
+	MOV p, AX
+
+	MOV AX, p
+	CALL print_output
+	CALL new_line     ; Line 28
+
+
+	MOV AX, p
+	CALL print_output
+	CALL new_line     ; Line 31
+
+	MOV k, AX
+
+	MOV AX, k
+	CALL print_output
+	CALL new_line     ; Line 34
+
+	MOV AX, 0
+
+Parsing completed successfully with 0 syntax errors.
