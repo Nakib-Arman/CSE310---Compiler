@@ -80,11 +80,11 @@ public:
   	Function* curr_func = new Function();
 
   	string datatype = "none";
-  	int arr_length = 1;
   	int in_code_segment = 0;
   	int division = 0;
   	int label_count = 1;
   	int in_main = 0;
+  	int end_label = 0;
 
 
   class StartContext;
@@ -309,6 +309,7 @@ public:
   class  Declaration_listContext : public antlr4::ParserRuleContext {
   public:
     antlr4::Token *idToken = nullptr;
+    antlr4::Token *const_intToken = nullptr;
     Declaration_listContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *ID();
@@ -388,6 +389,8 @@ public:
   class  VariableContext : public antlr4::ParserRuleContext {
   public:
     string name;
+    string type;
+    int stack_index;
     antlr4::Token *idToken = nullptr;
     VariableContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
@@ -422,6 +425,8 @@ public:
 
   class  Logic_expressionContext : public antlr4::ParserRuleContext {
   public:
+    string type;
+    C8086Parser::Rel_expressionContext *re = nullptr;
     antlr4::Token *logicopToken = nullptr;
     Logic_expressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
@@ -438,6 +443,8 @@ public:
 
   class  Rel_expressionContext : public antlr4::ParserRuleContext {
   public:
+    string type;
+    C8086Parser::Simple_expressionContext *se = nullptr;
     antlr4::Token *relopToken = nullptr;
     Rel_expressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
@@ -454,6 +461,8 @@ public:
 
   class  Simple_expressionContext : public antlr4::ParserRuleContext {
   public:
+    string type;
+    C8086Parser::TermContext *t = nullptr;
     antlr4::Token *addopToken = nullptr;
     Simple_expressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
@@ -470,7 +479,9 @@ public:
   Simple_expressionContext* simple_expression(int precedence);
   class  TermContext : public antlr4::ParserRuleContext {
   public:
+    string type;
     C8086Parser::TermContext *t = nullptr;
+    C8086Parser::Unary_expressionContext *ue = nullptr;
     antlr4::Token *mulopToken = nullptr;
     TermContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
@@ -487,6 +498,9 @@ public:
   TermContext* term(int precedence);
   class  Unary_expressionContext : public antlr4::ParserRuleContext {
   public:
+    string type;
+    C8086Parser::Unary_expressionContext *ue = nullptr;
+    C8086Parser::FactorContext *f = nullptr;
     Unary_expressionContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *ADDOP();
@@ -503,6 +517,7 @@ public:
 
   class  FactorContext : public antlr4::ParserRuleContext {
   public:
+    string type;
     C8086Parser::VariableContext *v = nullptr;
     antlr4::Token *idToken = nullptr;
     antlr4::Token *const_intToken = nullptr;
