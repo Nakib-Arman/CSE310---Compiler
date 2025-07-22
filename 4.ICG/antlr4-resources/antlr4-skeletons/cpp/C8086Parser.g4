@@ -12,26 +12,86 @@ options {
     #include "C8086Lexer.h"
 	#include "SymbolTable/2105128_SymbolTable.cpp"
 
-    extern std::ofstream parserLogFile;
+	extern std::ofstream asmFile;
 }
 
 @parser::members {
     void write(const std::string message) {
-        if (!parserLogFile) {
-            std::cout << "Error opening parserLogFile.txt" << std::endl;
+        if (!asmFile) {
+            std::cout << "Error opening code.asm" << std::endl;
             return;
         }
 
-        parserLogFile << message << std::endl;
-        parserLogFile.flush();
+        asmFile << message << std::endl;
+        asmFile.flush();
     }
 
 	void initiate() {
-		parserLogFile << ".MODEL SMALL" << std::endl;
-		parserLogFile << ".STACK 100H" << std::endl<<std::endl;
-		parserLogFile << ".DATA" << std::endl;
-		parserLogFile << "\tnumber DB \"00000$\"" << std::endl;
-		parserLogFile.flush();
+		asmFile << ".MODEL SMALL" << std::endl;
+		asmFile << ".STACK 100H" << std::endl<<std::endl;
+		asmFile << ".DATA" << std::endl;
+		asmFile << "\tnumber DB \"00000$\"" << std::endl;
+		asmFile.flush();
+	}
+
+	void optimize() {
+		ifstream code("output/code.asm");
+		ofstream optcode("output/optcode.asm");
+		if(!code.is_open()){
+			cerr<<"Error opening code.asm for optimization"<<endl;
+		}
+
+		string prev_left="";
+		string prev_right="";
+		string prev_instr="";
+		string line;
+		while(getline(code,line)){
+			stringstream ss(line);
+			string first_part,second_part,instr,left,right;
+			getline(ss,first_part,',');
+			getline(ss,second_part,',');
+			stringstream ss2(first_part);
+			stringstream ss3(second_part);
+			ss2>>instr;
+			ss2>>left;
+			ss3>>right;
+			if(instr == "MOV"){
+				if(prev_instr == ""){
+					prev_left = left;
+					prev_right = right;
+					prev_instr = line;
+				}
+				else{
+					if(prev_left == right && prev_right == left){
+						optcode << prev_instr<<endl;
+						prev_instr = "";
+						prev_left = "";
+						prev_right = "";
+					}
+					else{
+						optcode << prev_instr<<endl;
+						prev_instr = line;
+						prev_left = left;
+						prev_right = right;
+					}
+				}
+			}
+			else{
+				if(instr == ";"){
+					continue;
+				}
+				if(prev_instr != ""){
+					optcode << prev_instr<<endl;
+					optcode << line<<endl;
+					prev_instr = "";
+					prev_left = "";
+					prev_right = "";
+				}
+				else{
+					optcode << line<<endl;
+				}
+			}
+		}
 	}
 
 	SymbolTable* symbolTable = new SymbolTable(30, &HashFunction::sdbmHash);
@@ -60,6 +120,7 @@ start : {
 			write(line);
 		}
         write("END main");
+		optimize();
 	}
 	;
 
@@ -175,7 +236,11 @@ compound_statement
 	;
  		    
 var_declaration 
-    : ts=type_specifier_stack dl=declaration_list sm=SEMICOLON
+    : ts=type_specifier_stack dl=declaration_list sm=SEMICOLON{
+		if(in_code_segment == 1){
+			write("\t\t\t\t\t; Line "+to_string($sm->getLine()));
+		}
+	}
     ;
 
  		 
@@ -188,15 +253,12 @@ type_specifier returns [string text]
 type_specifier_stack returns [string text]
 	: INT {
 		datatype = $INT->getText();
-		// write("\tPUSH BP\n\tMOV BP, SP");
 	}
 	| FLOAT {
 		datatype = $FLOAT->getText();
-		write("\tPUSH BP\n\tMOV BP, SP");
 	}
 	| VOID {
 		datatype = $VOID->getText();
-		write("\tPUSH BP\n\tMOV BP, SP");
 	}
 	;
  		
@@ -209,10 +271,20 @@ declaration_list
 		else {
 			symbolTable->insert($ID->getText(),datatype,"local",NULL);
 			curr_func->incStackElements();
-			write("\tSUB SP, 2\t; Line "+to_string($ID->getLine()));
+			write("\tSUB SP, 2");
 		}
 	}
-	| declaration_list COMMA ID LTHIRD CONST_INT RTHIRD
+	| declaration_list COMMA ID LTHIRD CONST_INT RTHIRD {
+		if(symbolTable->getCurrentScopeID() == "1"){
+			symbolTable->insert($ID->getText(),datatype,"global",NULL,true,stoi($CONST_INT->getText()));
+			write("\t"+$ID->getText()+" DW "+$CONST_INT->getText()+" DUP (0000H)");
+		}
+		else {
+			symbolTable->insert($ID->getText(),datatype,"local",NULL,true,stoi($CONST_INT->getText()));
+			curr_func->incStackElements();
+			write("\tSUB SP, "+to_string(stoi($CONST_INT->getText())*2));
+		}
+	}
 	| ID {
 		if(symbolTable->getCurrentScopeID() == "1"){
 			symbolTable->insert($ID->getText(),datatype,"global",NULL);
@@ -232,25 +304,24 @@ declaration_list
 		else {
 			symbolTable->insert($ID->getText(),datatype,"local",NULL,true,stoi($CONST_INT->getText()));
 			curr_func->incStackElements();
-			write("\tSUB SP, "+to_string(stoi($CONST_INT->getText())*2)+"\t; Line "+to_string($ID->getLine()));
+			write("\tSUB SP, "+to_string(stoi($CONST_INT->getText())*2));
 		}
 	}
 	;
  		  
 statements 
-	: statement
-	| statements statement
+	: s=statement[-1] 
+	| statements s=statement[-1]
 	;
 	   
-statement 
-	: var_declaration {
-	}
-	| expression_statement {
-	}
+statement[int ih_end_label]
+	: var_declaration 
+	| expression_statement
 	| compound_statement {
 	}
 	| FOR LPAREN expression_statement {
-		int begin_label = label_count;
+		int begin_label = label_count++;
+		write("L"+to_string(begin_label)+":");
 	} es=expression_statement {
 		write("\tCMP AX, 0");
 		write("\tJNE L"+to_string(label_count));
@@ -263,22 +334,26 @@ statement
 		write("\tJMP L"+to_string(begin_label));
 	} RPAREN {
 		write("L"+to_string(true_label)+":");
-	} statement {
+	} s=statement[-1] {
 		write("\tJMP L"+to_string(inc_label));
 		write("L"+to_string(end_label)+":");
 	}
 	| IF LPAREN expression RPAREN {
+		int true_label = label_count++;
+		int temp = $ih_end_label;
+		if($ih_end_label == -1){
+			$ih_end_label = label_count++;
+		}
 		write("\tCMP AX, 0");
-		write("\tJNE L"+to_string(label_count));
-		write("\tJMP L"+to_string(label_count+1));
-		write("L"+to_string(label_count)+":");
-		label_count++;
-	} statement {
-		write("L"+to_string(label_count)+":");
-		label_count++;
+		write("\tJNE L"+to_string(true_label));
+		write("\tJMP L"+to_string($ih_end_label));
+		write("L"+to_string(true_label)+":");
+	} s=statement[$ih_end_label] {
+		if(temp == -1)
+			write("L"+to_string($ih_end_label)+":");
 	}
 	| IF LPAREN expression RPAREN {
-		int if_label,else_label,end_label;
+		int if_label,else_label;
 		write("\tCMP AX, 0");
 		write("\tJNE L"+to_string(label_count));
 		if_label = label_count;
@@ -286,17 +361,22 @@ statement
 		write("\tJMP L"+to_string(label_count));
 		else_label = label_count;
 		label_count++;
-		end_label = label_count;
+		int temp = $ih_end_label;
+		if($ih_end_label == -1){
+			$ih_end_label = label_count;
+		}
 		label_count++;
 		write("L"+to_string(if_label)+":");
-	} statement ELSE {
-		write("\tJMP L"+to_string(end_label));
+	} s=statement[$ih_end_label] ELSE {
+		write("\tJMP L"+to_string($ih_end_label));
 		write("L"+to_string(else_label)+":");
-	} statement {
-		write("L"+to_string(end_label)+":");
+	} s=statement[$ih_end_label] {
+		if(temp == -1)
+			write("L"+to_string($ih_end_label)+":");
 	}
 	| WHILE LPAREN {
-		int begin_label = label_count;
+		int begin_label = label_count++;
+		write("L"+to_string(begin_label)+":");
 	} expression RPAREN {
 		write("\tCMP AX, 0");
 		write("\tJNE L"+to_string(label_count));
@@ -304,11 +384,11 @@ statement
 		int end_label = label_count++;
 		write("\tJMP L"+to_string(end_label));
 		write("L"+to_string(true_label)+":");
-	} statement {
+	} s=statement[-1] {
 		write("\tJMP L"+to_string(begin_label));
 		write("L"+to_string(end_label)+":");
 	}
-	| PRINTLN LPAREN ID RPAREN SEMICOLON {
+	| PRINTLN LPAREN ID RPAREN sm=SEMICOLON {
 		if(symbolTable->getVariableScope($ID->getText()) == "global"){
 			write("\tMOV AX, "+$ID->getText());
 		}
@@ -322,16 +402,22 @@ statement
 				write("\tMOV AX, [BP"+to_string(-stack_index*2)+"]");
 			}
 		}
-		write("\tCALL print_output\n\tCALL new_line     ; Line "+to_string($SEMICOLON->getLine()));
+		write("\tCALL print_output\n\tCALL new_line");
+		write("\t\t\t\t\t; Line "+to_string($sm->getLine()));
 	}
-	| {write("");} RETURN expression SEMICOLON {
-		write("\tJMP L"+to_string(end_label)+"\t; Line "+to_string($SEMICOLON->getLine()));
+	| {write("");} RETURN expression sm=SEMICOLON {
+		write("\tJMP L"+to_string(end_label));
+		write("\t\t\t\t\t; Line "+to_string($sm->getLine()));
 	}
 	;
 	  
 expression_statement 
-	: SEMICOLON			
-	| expression SEMICOLON 
+	: sm=SEMICOLON {
+		write("\t\t\t\t\t; Line "+to_string($sm->getLine()));
+	}	
+	| expression sm=SEMICOLON {
+		write("\t\t\t\t\t; Line "+to_string($sm->getLine()));
+	}
 	;
 	  
 variable returns [string name,string type,int stack_index]
@@ -419,9 +505,9 @@ logic_expression returns [string type]
 			write("\tJMP L"+to_string(true_label));
 		}
 		write("L"+to_string(true_label)+":");
-		write("MOV AX, 1\n\tJMP L"+to_string(end_label));
+		write("\tMOV AX, 1\n\tJMP L"+to_string(end_label));
 		write("L"+to_string(false_label)+":");
-		write("MOV AX, 0");
+		write("\tMOV AX, 0");
 		write("L"+to_string(end_label)+":");
 	}
 	;
@@ -530,8 +616,6 @@ factor returns [string type]
 			write("\tMOV CX, "+$v.name);
 		}
 		else{
-			write("L"+to_string(label_count)+":");
-			label_count++;
 			if($type == "array" && $v.name != "[BP+SI]"){
 				write("\tPOP BX");
 				write("\tMOV AX, 2");
@@ -592,8 +676,8 @@ factor returns [string type]
 			write("\tPOP AX");
 			write("\tNEG SI");
 		}
-		write("L"+to_string(label_count)+":");
-		label_count++;
+		// write("L"+to_string(label_count)+":");
+		// label_count++;
 		write("\tMOV AX, "+$v.name);
 		write("\tPUSH AX");
 		write("\tINC AX");

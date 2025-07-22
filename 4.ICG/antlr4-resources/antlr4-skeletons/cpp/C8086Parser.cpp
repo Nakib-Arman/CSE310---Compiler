@@ -6,7 +6,7 @@
     #include "C8086Lexer.h"
 	#include "SymbolTable/2105128_SymbolTable.cpp"
 
-    extern std::ofstream parserLogFile;
+	extern std::ofstream asmFile;
 
 
 // Generated from C8086Parser.g4 by ANTLR 4.13.2
@@ -93,15 +93,15 @@ void c8086parserParserInitialize() {
   	4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,1,4,3,4,102,8,4,1,5,1,5,1,5,
   	3,5,107,8,5,1,6,1,6,1,6,1,6,3,6,113,8,6,1,7,1,7,1,7,1,7,1,7,1,7,3,7,121,
   	8,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,1,7,5,7,132,8,7,10,7,12,7,135,9,7,
-  	1,8,1,8,1,8,1,8,1,8,1,8,3,8,143,8,8,1,9,1,9,1,9,1,9,1,10,1,10,1,11,1,
-  	11,1,11,1,11,1,11,1,11,3,11,157,8,11,1,12,1,12,1,12,1,12,1,12,1,12,1,
-  	12,1,12,3,12,167,8,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,
-  	12,5,12,179,8,12,10,12,12,12,182,9,12,1,13,1,13,1,13,1,13,1,13,5,13,189,
-  	8,13,10,13,12,13,192,9,13,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,
+  	1,8,1,8,1,8,1,8,1,8,1,8,3,8,143,8,8,1,9,1,9,1,9,1,9,1,9,1,10,1,10,1,11,
+  	1,11,1,11,1,11,1,11,1,11,3,11,158,8,11,1,12,1,12,1,12,1,12,1,12,1,12,
+  	1,12,1,12,3,12,168,8,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,1,12,
+  	1,12,1,12,5,12,181,8,12,10,12,12,12,184,9,12,1,13,1,13,1,13,1,13,1,13,
+  	5,13,191,8,13,10,13,12,13,194,9,13,1,14,1,14,1,14,1,14,1,14,1,14,1,14,
   	1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,
   	1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,
   	1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,
-  	1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,3,14,256,8,14,
+  	1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,1,14,3,14,254,8,14,1,15,1,15,
   	1,15,1,15,1,15,1,15,3,15,262,8,15,1,16,1,16,1,16,1,16,1,16,1,16,1,16,
   	1,16,3,16,272,8,16,1,17,1,17,1,17,1,17,1,17,1,17,3,17,280,8,17,1,18,1,
   	18,1,18,1,18,1,18,1,18,1,18,1,18,1,18,3,18,291,8,18,1,19,1,19,1,19,1,
@@ -116,8 +116,8 @@ void c8086parserParserInitialize() {
   	12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,0,1,1,0,11,
   	13,405,0,52,1,0,0,0,2,56,1,0,0,0,4,69,1,0,0,0,6,84,1,0,0,0,8,101,1,0,
   	0,0,10,106,1,0,0,0,12,112,1,0,0,0,14,120,1,0,0,0,16,142,1,0,0,0,18,144,
-  	1,0,0,0,20,148,1,0,0,0,22,156,1,0,0,0,24,166,1,0,0,0,26,183,1,0,0,0,28,
-  	255,1,0,0,0,30,261,1,0,0,0,32,271,1,0,0,0,34,279,1,0,0,0,36,290,1,0,0,
+  	1,0,0,0,20,149,1,0,0,0,22,157,1,0,0,0,24,167,1,0,0,0,26,185,1,0,0,0,28,
+  	253,1,0,0,0,30,261,1,0,0,0,32,271,1,0,0,0,34,279,1,0,0,0,36,290,1,0,0,
   	0,38,301,1,0,0,0,40,303,1,0,0,0,42,318,1,0,0,0,44,342,1,0,0,0,46,369,
   	1,0,0,0,48,373,1,0,0,0,50,375,1,0,0,0,52,53,6,0,-1,0,53,54,3,2,1,0,54,
   	55,6,0,-1,0,55,1,1,0,0,0,56,57,6,1,-1,0,57,58,3,4,2,0,58,63,1,0,0,0,59,
@@ -143,74 +143,74 @@ void c8086parserParserInitialize() {
   	135,133,1,0,0,0,136,137,5,16,0,0,137,138,3,26,13,0,138,139,5,17,0,0,139,
   	143,1,0,0,0,140,141,5,16,0,0,141,143,5,17,0,0,142,136,1,0,0,0,142,140,
   	1,0,0,0,143,17,1,0,0,0,144,145,3,22,11,0,145,146,3,24,12,0,146,147,5,
-  	20,0,0,147,19,1,0,0,0,148,149,7,0,0,0,149,21,1,0,0,0,150,151,5,11,0,0,
-  	151,157,6,11,-1,0,152,153,5,12,0,0,153,157,6,11,-1,0,154,155,5,13,0,0,
-  	155,157,6,11,-1,0,156,150,1,0,0,0,156,152,1,0,0,0,156,154,1,0,0,0,157,
-  	23,1,0,0,0,158,159,6,12,-1,0,159,160,5,31,0,0,160,167,6,12,-1,0,161,162,
-  	5,31,0,0,162,163,5,18,0,0,163,164,5,32,0,0,164,165,5,19,0,0,165,167,6,
-  	12,-1,0,166,158,1,0,0,0,166,161,1,0,0,0,167,180,1,0,0,0,168,169,10,4,
-  	0,0,169,170,5,21,0,0,170,171,5,31,0,0,171,179,6,12,-1,0,172,173,10,3,
-  	0,0,173,174,5,21,0,0,174,175,5,31,0,0,175,176,5,18,0,0,176,177,5,32,0,
-  	0,177,179,5,19,0,0,178,168,1,0,0,0,178,172,1,0,0,0,179,182,1,0,0,0,180,
-  	178,1,0,0,0,180,181,1,0,0,0,181,25,1,0,0,0,182,180,1,0,0,0,183,184,6,
-  	13,-1,0,184,185,3,28,14,0,185,190,1,0,0,0,186,187,10,1,0,0,187,189,3,
-  	28,14,0,188,186,1,0,0,0,189,192,1,0,0,0,190,188,1,0,0,0,190,191,1,0,0,
-  	0,191,27,1,0,0,0,192,190,1,0,0,0,193,194,3,18,9,0,194,195,6,14,-1,0,195,
-  	256,1,0,0,0,196,197,3,30,15,0,197,198,6,14,-1,0,198,256,1,0,0,0,199,200,
-  	3,16,8,0,200,201,6,14,-1,0,201,256,1,0,0,0,202,203,5,7,0,0,203,204,5,
-  	14,0,0,204,205,3,30,15,0,205,206,6,14,-1,0,206,207,3,30,15,0,207,208,
-  	6,14,-1,0,208,209,3,34,17,0,209,210,6,14,-1,0,210,211,5,15,0,0,211,212,
-  	6,14,-1,0,212,213,3,28,14,0,213,214,6,14,-1,0,214,256,1,0,0,0,215,216,
-  	5,5,0,0,216,217,5,14,0,0,217,218,3,34,17,0,218,219,5,15,0,0,219,220,6,
-  	14,-1,0,220,221,3,28,14,0,221,222,6,14,-1,0,222,256,1,0,0,0,223,224,5,
-  	5,0,0,224,225,5,14,0,0,225,226,3,34,17,0,226,227,5,15,0,0,227,228,6,14,
-  	-1,0,228,229,3,28,14,0,229,230,5,6,0,0,230,231,6,14,-1,0,231,232,3,28,
-  	14,0,232,233,6,14,-1,0,233,256,1,0,0,0,234,235,5,8,0,0,235,236,5,14,0,
-  	0,236,237,6,14,-1,0,237,238,3,34,17,0,238,239,5,15,0,0,239,240,6,14,-1,
-  	0,240,241,3,28,14,0,241,242,6,14,-1,0,242,256,1,0,0,0,243,244,5,9,0,0,
-  	244,245,5,14,0,0,245,246,5,31,0,0,246,247,5,15,0,0,247,248,5,20,0,0,248,
-  	256,6,14,-1,0,249,250,6,14,-1,0,250,251,5,10,0,0,251,252,3,34,17,0,252,
-  	253,5,20,0,0,253,254,6,14,-1,0,254,256,1,0,0,0,255,193,1,0,0,0,255,196,
-  	1,0,0,0,255,199,1,0,0,0,255,202,1,0,0,0,255,215,1,0,0,0,255,223,1,0,0,
-  	0,255,234,1,0,0,0,255,243,1,0,0,0,255,249,1,0,0,0,256,29,1,0,0,0,257,
-  	262,5,20,0,0,258,259,3,34,17,0,259,260,5,20,0,0,260,262,1,0,0,0,261,257,
-  	1,0,0,0,261,258,1,0,0,0,262,31,1,0,0,0,263,264,5,31,0,0,264,272,6,16,
-  	-1,0,265,266,5,31,0,0,266,267,5,18,0,0,267,268,3,34,17,0,268,269,5,19,
-  	0,0,269,270,6,16,-1,0,270,272,1,0,0,0,271,263,1,0,0,0,271,265,1,0,0,0,
-  	272,33,1,0,0,0,273,280,3,36,18,0,274,275,3,32,16,0,275,276,5,30,0,0,276,
-  	277,3,36,18,0,277,278,6,17,-1,0,278,280,1,0,0,0,279,273,1,0,0,0,279,274,
-  	1,0,0,0,280,35,1,0,0,0,281,282,3,38,19,0,282,283,6,18,-1,0,283,291,1,
-  	0,0,0,284,285,3,38,19,0,285,286,5,29,0,0,286,287,6,18,-1,0,287,288,3,
-  	38,19,0,288,289,6,18,-1,0,289,291,1,0,0,0,290,281,1,0,0,0,290,284,1,0,
-  	0,0,291,37,1,0,0,0,292,293,3,40,20,0,293,294,6,19,-1,0,294,302,1,0,0,
-  	0,295,296,3,40,20,0,296,297,5,28,0,0,297,298,6,19,-1,0,298,299,3,40,20,
-  	0,299,300,6,19,-1,0,300,302,1,0,0,0,301,292,1,0,0,0,301,295,1,0,0,0,302,
-  	39,1,0,0,0,303,304,6,20,-1,0,304,305,3,42,21,0,305,306,6,20,-1,0,306,
-  	315,1,0,0,0,307,308,10,1,0,0,308,309,6,20,-1,0,309,310,5,22,0,0,310,311,
-  	3,42,21,0,311,312,6,20,-1,0,312,314,1,0,0,0,313,307,1,0,0,0,314,317,1,
-  	0,0,0,315,313,1,0,0,0,315,316,1,0,0,0,316,41,1,0,0,0,317,315,1,0,0,0,
-  	318,319,6,21,-1,0,319,320,3,44,22,0,320,321,6,21,-1,0,321,330,1,0,0,0,
-  	322,323,10,1,0,0,323,324,5,24,0,0,324,325,6,21,-1,0,325,326,3,44,22,0,
-  	326,327,6,21,-1,0,327,329,1,0,0,0,328,322,1,0,0,0,329,332,1,0,0,0,330,
-  	328,1,0,0,0,330,331,1,0,0,0,331,43,1,0,0,0,332,330,1,0,0,0,333,334,5,
-  	22,0,0,334,335,3,44,22,0,335,336,6,22,-1,0,336,343,1,0,0,0,337,338,5,
-  	27,0,0,338,343,3,44,22,0,339,340,3,46,23,0,340,341,6,22,-1,0,341,343,
-  	1,0,0,0,342,333,1,0,0,0,342,337,1,0,0,0,342,339,1,0,0,0,343,45,1,0,0,
-  	0,344,345,3,32,16,0,345,346,6,23,-1,0,346,370,1,0,0,0,347,348,5,31,0,
-  	0,348,349,5,14,0,0,349,350,3,48,24,0,350,351,5,15,0,0,351,352,6,23,-1,
-  	0,352,370,1,0,0,0,353,354,5,14,0,0,354,355,3,34,17,0,355,356,5,15,0,0,
-  	356,370,1,0,0,0,357,358,5,32,0,0,358,370,6,23,-1,0,359,360,5,33,0,0,360,
-  	370,6,23,-1,0,361,362,3,32,16,0,362,363,5,25,0,0,363,364,6,23,-1,0,364,
-  	370,1,0,0,0,365,366,3,32,16,0,366,367,5,26,0,0,367,368,6,23,-1,0,368,
-  	370,1,0,0,0,369,344,1,0,0,0,369,347,1,0,0,0,369,353,1,0,0,0,369,357,1,
-  	0,0,0,369,359,1,0,0,0,369,361,1,0,0,0,369,365,1,0,0,0,370,47,1,0,0,0,
-  	371,374,3,50,25,0,372,374,1,0,0,0,373,371,1,0,0,0,373,372,1,0,0,0,374,
-  	49,1,0,0,0,375,376,6,25,-1,0,376,377,3,36,18,0,377,378,6,25,-1,0,378,
-  	386,1,0,0,0,379,380,10,2,0,0,380,381,5,21,0,0,381,382,3,36,18,0,382,383,
-  	6,25,-1,0,383,385,1,0,0,0,384,379,1,0,0,0,385,388,1,0,0,0,386,384,1,0,
-  	0,0,386,387,1,0,0,0,387,51,1,0,0,0,388,386,1,0,0,0,27,63,69,84,101,106,
-  	112,120,131,133,142,156,166,178,180,190,255,261,271,279,290,301,315,330,
-  	342,369,373,386
+  	20,0,0,147,148,6,9,-1,0,148,19,1,0,0,0,149,150,7,0,0,0,150,21,1,0,0,0,
+  	151,152,5,11,0,0,152,158,6,11,-1,0,153,154,5,12,0,0,154,158,6,11,-1,0,
+  	155,156,5,13,0,0,156,158,6,11,-1,0,157,151,1,0,0,0,157,153,1,0,0,0,157,
+  	155,1,0,0,0,158,23,1,0,0,0,159,160,6,12,-1,0,160,161,5,31,0,0,161,168,
+  	6,12,-1,0,162,163,5,31,0,0,163,164,5,18,0,0,164,165,5,32,0,0,165,166,
+  	5,19,0,0,166,168,6,12,-1,0,167,159,1,0,0,0,167,162,1,0,0,0,168,182,1,
+  	0,0,0,169,170,10,4,0,0,170,171,5,21,0,0,171,172,5,31,0,0,172,181,6,12,
+  	-1,0,173,174,10,3,0,0,174,175,5,21,0,0,175,176,5,31,0,0,176,177,5,18,
+  	0,0,177,178,5,32,0,0,178,179,5,19,0,0,179,181,6,12,-1,0,180,169,1,0,0,
+  	0,180,173,1,0,0,0,181,184,1,0,0,0,182,180,1,0,0,0,182,183,1,0,0,0,183,
+  	25,1,0,0,0,184,182,1,0,0,0,185,186,6,13,-1,0,186,187,3,28,14,0,187,192,
+  	1,0,0,0,188,189,10,1,0,0,189,191,3,28,14,0,190,188,1,0,0,0,191,194,1,
+  	0,0,0,192,190,1,0,0,0,192,193,1,0,0,0,193,27,1,0,0,0,194,192,1,0,0,0,
+  	195,254,3,18,9,0,196,254,3,30,15,0,197,198,3,16,8,0,198,199,6,14,-1,0,
+  	199,254,1,0,0,0,200,201,5,7,0,0,201,202,5,14,0,0,202,203,3,30,15,0,203,
+  	204,6,14,-1,0,204,205,3,30,15,0,205,206,6,14,-1,0,206,207,3,34,17,0,207,
+  	208,6,14,-1,0,208,209,5,15,0,0,209,210,6,14,-1,0,210,211,3,28,14,0,211,
+  	212,6,14,-1,0,212,254,1,0,0,0,213,214,5,5,0,0,214,215,5,14,0,0,215,216,
+  	3,34,17,0,216,217,5,15,0,0,217,218,6,14,-1,0,218,219,3,28,14,0,219,220,
+  	6,14,-1,0,220,254,1,0,0,0,221,222,5,5,0,0,222,223,5,14,0,0,223,224,3,
+  	34,17,0,224,225,5,15,0,0,225,226,6,14,-1,0,226,227,3,28,14,0,227,228,
+  	5,6,0,0,228,229,6,14,-1,0,229,230,3,28,14,0,230,231,6,14,-1,0,231,254,
+  	1,0,0,0,232,233,5,8,0,0,233,234,5,14,0,0,234,235,6,14,-1,0,235,236,3,
+  	34,17,0,236,237,5,15,0,0,237,238,6,14,-1,0,238,239,3,28,14,0,239,240,
+  	6,14,-1,0,240,254,1,0,0,0,241,242,5,9,0,0,242,243,5,14,0,0,243,244,5,
+  	31,0,0,244,245,5,15,0,0,245,246,5,20,0,0,246,254,6,14,-1,0,247,248,6,
+  	14,-1,0,248,249,5,10,0,0,249,250,3,34,17,0,250,251,5,20,0,0,251,252,6,
+  	14,-1,0,252,254,1,0,0,0,253,195,1,0,0,0,253,196,1,0,0,0,253,197,1,0,0,
+  	0,253,200,1,0,0,0,253,213,1,0,0,0,253,221,1,0,0,0,253,232,1,0,0,0,253,
+  	241,1,0,0,0,253,247,1,0,0,0,254,29,1,0,0,0,255,256,5,20,0,0,256,262,6,
+  	15,-1,0,257,258,3,34,17,0,258,259,5,20,0,0,259,260,6,15,-1,0,260,262,
+  	1,0,0,0,261,255,1,0,0,0,261,257,1,0,0,0,262,31,1,0,0,0,263,264,5,31,0,
+  	0,264,272,6,16,-1,0,265,266,5,31,0,0,266,267,5,18,0,0,267,268,3,34,17,
+  	0,268,269,5,19,0,0,269,270,6,16,-1,0,270,272,1,0,0,0,271,263,1,0,0,0,
+  	271,265,1,0,0,0,272,33,1,0,0,0,273,280,3,36,18,0,274,275,3,32,16,0,275,
+  	276,5,30,0,0,276,277,3,36,18,0,277,278,6,17,-1,0,278,280,1,0,0,0,279,
+  	273,1,0,0,0,279,274,1,0,0,0,280,35,1,0,0,0,281,282,3,38,19,0,282,283,
+  	6,18,-1,0,283,291,1,0,0,0,284,285,3,38,19,0,285,286,5,29,0,0,286,287,
+  	6,18,-1,0,287,288,3,38,19,0,288,289,6,18,-1,0,289,291,1,0,0,0,290,281,
+  	1,0,0,0,290,284,1,0,0,0,291,37,1,0,0,0,292,293,3,40,20,0,293,294,6,19,
+  	-1,0,294,302,1,0,0,0,295,296,3,40,20,0,296,297,5,28,0,0,297,298,6,19,
+  	-1,0,298,299,3,40,20,0,299,300,6,19,-1,0,300,302,1,0,0,0,301,292,1,0,
+  	0,0,301,295,1,0,0,0,302,39,1,0,0,0,303,304,6,20,-1,0,304,305,3,42,21,
+  	0,305,306,6,20,-1,0,306,315,1,0,0,0,307,308,10,1,0,0,308,309,6,20,-1,
+  	0,309,310,5,22,0,0,310,311,3,42,21,0,311,312,6,20,-1,0,312,314,1,0,0,
+  	0,313,307,1,0,0,0,314,317,1,0,0,0,315,313,1,0,0,0,315,316,1,0,0,0,316,
+  	41,1,0,0,0,317,315,1,0,0,0,318,319,6,21,-1,0,319,320,3,44,22,0,320,321,
+  	6,21,-1,0,321,330,1,0,0,0,322,323,10,1,0,0,323,324,5,24,0,0,324,325,6,
+  	21,-1,0,325,326,3,44,22,0,326,327,6,21,-1,0,327,329,1,0,0,0,328,322,1,
+  	0,0,0,329,332,1,0,0,0,330,328,1,0,0,0,330,331,1,0,0,0,331,43,1,0,0,0,
+  	332,330,1,0,0,0,333,334,5,22,0,0,334,335,3,44,22,0,335,336,6,22,-1,0,
+  	336,343,1,0,0,0,337,338,5,27,0,0,338,343,3,44,22,0,339,340,3,46,23,0,
+  	340,341,6,22,-1,0,341,343,1,0,0,0,342,333,1,0,0,0,342,337,1,0,0,0,342,
+  	339,1,0,0,0,343,45,1,0,0,0,344,345,3,32,16,0,345,346,6,23,-1,0,346,370,
+  	1,0,0,0,347,348,5,31,0,0,348,349,5,14,0,0,349,350,3,48,24,0,350,351,5,
+  	15,0,0,351,352,6,23,-1,0,352,370,1,0,0,0,353,354,5,14,0,0,354,355,3,34,
+  	17,0,355,356,5,15,0,0,356,370,1,0,0,0,357,358,5,32,0,0,358,370,6,23,-1,
+  	0,359,360,5,33,0,0,360,370,6,23,-1,0,361,362,3,32,16,0,362,363,5,25,0,
+  	0,363,364,6,23,-1,0,364,370,1,0,0,0,365,366,3,32,16,0,366,367,5,26,0,
+  	0,367,368,6,23,-1,0,368,370,1,0,0,0,369,344,1,0,0,0,369,347,1,0,0,0,369,
+  	353,1,0,0,0,369,357,1,0,0,0,369,359,1,0,0,0,369,361,1,0,0,0,369,365,1,
+  	0,0,0,370,47,1,0,0,0,371,374,3,50,25,0,372,374,1,0,0,0,373,371,1,0,0,
+  	0,373,372,1,0,0,0,374,49,1,0,0,0,375,376,6,25,-1,0,376,377,3,36,18,0,
+  	377,378,6,25,-1,0,378,386,1,0,0,0,379,380,10,2,0,0,380,381,5,21,0,0,381,
+  	382,3,36,18,0,382,383,6,25,-1,0,383,385,1,0,0,0,384,379,1,0,0,0,385,388,
+  	1,0,0,0,386,384,1,0,0,0,386,387,1,0,0,0,387,51,1,0,0,0,388,386,1,0,0,
+  	0,27,63,69,84,101,106,112,120,131,133,142,157,167,180,182,192,253,261,
+  	271,279,290,301,315,330,342,369,373,386
   };
   staticData->serializedATN = antlr4::atn::SerializedATNView(serializedATNSegment, sizeof(serializedATNSegment) / sizeof(serializedATNSegment[0]));
 
@@ -314,6 +314,7 @@ C8086Parser::StartContext* C8086Parser::start() {
     			write(line);
     		}
             write("END main");
+    		optimize();
     	
    
   }
@@ -1210,6 +1211,11 @@ C8086Parser::Var_declarationContext* C8086Parser::var_declaration() {
     antlrcpp::downCast<Var_declarationContext *>(_localctx)->dl = declaration_list(0);
     setState(146);
     antlrcpp::downCast<Var_declarationContext *>(_localctx)->sm = match(C8086Parser::SEMICOLON);
+
+    		if(in_code_segment == 1){
+    			write("\t\t\t\t\t; Line "+to_string(antlrcpp::downCast<Var_declarationContext *>(_localctx)->sm->getLine()));
+    		}
+    	
    
   }
   catch (RecognitionException &e) {
@@ -1270,7 +1276,7 @@ C8086Parser::Type_specifierContext* C8086Parser::type_specifier() {
   });
   try {
     enterOuterAlt(_localctx, 1);
-    setState(148);
+    setState(149);
     _la = _input->LA(1);
     if (!((((_la & ~ 0x3fULL) == 0) &&
       ((1ULL << _la) & 14336) != 0))) {
@@ -1338,38 +1344,35 @@ C8086Parser::Type_specifier_stackContext* C8086Parser::type_specifier_stack() {
     exitRule();
   });
   try {
-    setState(156);
+    setState(157);
     _errHandler->sync(this);
     switch (_input->LA(1)) {
       case C8086Parser::INT: {
         enterOuterAlt(_localctx, 1);
-        setState(150);
+        setState(151);
         antlrcpp::downCast<Type_specifier_stackContext *>(_localctx)->intToken = match(C8086Parser::INT);
 
         		datatype = antlrcpp::downCast<Type_specifier_stackContext *>(_localctx)->intToken->getText();
-        		// write("\tPUSH BP\n\tMOV BP, SP");
         	
         break;
       }
 
       case C8086Parser::FLOAT: {
         enterOuterAlt(_localctx, 2);
-        setState(152);
+        setState(153);
         antlrcpp::downCast<Type_specifier_stackContext *>(_localctx)->floatToken = match(C8086Parser::FLOAT);
 
         		datatype = antlrcpp::downCast<Type_specifier_stackContext *>(_localctx)->floatToken->getText();
-        		write("\tPUSH BP\n\tMOV BP, SP");
         	
         break;
       }
 
       case C8086Parser::VOID: {
         enterOuterAlt(_localctx, 3);
-        setState(154);
+        setState(155);
         antlrcpp::downCast<Type_specifier_stackContext *>(_localctx)->voidToken = match(C8086Parser::VOID);
 
         		datatype = antlrcpp::downCast<Type_specifier_stackContext *>(_localctx)->voidToken->getText();
-        		write("\tPUSH BP\n\tMOV BP, SP");
         	
         break;
       }
@@ -1461,11 +1464,11 @@ C8086Parser::Declaration_listContext* C8086Parser::declaration_list(int preceden
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(166);
+    setState(167);
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 11, _ctx)) {
     case 1: {
-      setState(159);
+      setState(160);
       antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken = match(C8086Parser::ID);
 
       		if(symbolTable->getCurrentScopeID() == "1"){
@@ -1482,13 +1485,13 @@ C8086Parser::Declaration_listContext* C8086Parser::declaration_list(int preceden
     }
 
     case 2: {
-      setState(161);
-      antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken = match(C8086Parser::ID);
       setState(162);
-      match(C8086Parser::LTHIRD);
+      antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken = match(C8086Parser::ID);
       setState(163);
-      antlrcpp::downCast<Declaration_listContext *>(_localctx)->const_intToken = match(C8086Parser::CONST_INT);
+      match(C8086Parser::LTHIRD);
       setState(164);
+      antlrcpp::downCast<Declaration_listContext *>(_localctx)->const_intToken = match(C8086Parser::CONST_INT);
+      setState(165);
       match(C8086Parser::RTHIRD);
 
       		if(symbolTable->getCurrentScopeID() == "1"){
@@ -1498,7 +1501,7 @@ C8086Parser::Declaration_listContext* C8086Parser::declaration_list(int preceden
       		else {
       			symbolTable->insert(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText(),datatype,"local",NULL,true,stoi(antlrcpp::downCast<Declaration_listContext *>(_localctx)->const_intToken->getText()));
       			curr_func->incStackElements();
-      			write("\tSUB SP, "+to_string(stoi(antlrcpp::downCast<Declaration_listContext *>(_localctx)->const_intToken->getText())*2)+"\t; Line "+to_string(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getLine()));
+      			write("\tSUB SP, "+to_string(stoi(antlrcpp::downCast<Declaration_listContext *>(_localctx)->const_intToken->getText())*2));
       		}
       	
       break;
@@ -1508,7 +1511,7 @@ C8086Parser::Declaration_listContext* C8086Parser::declaration_list(int preceden
       break;
     }
     _ctx->stop = _input->LT(-1);
-    setState(180);
+    setState(182);
     _errHandler->sync(this);
     alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 13, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
@@ -1516,18 +1519,18 @@ C8086Parser::Declaration_listContext* C8086Parser::declaration_list(int preceden
         if (!_parseListeners.empty())
           triggerExitRuleEvent();
         previousContext = _localctx;
-        setState(178);
+        setState(180);
         _errHandler->sync(this);
         switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 12, _ctx)) {
         case 1: {
           _localctx = _tracker.createInstance<Declaration_listContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleDeclaration_list);
-          setState(168);
+          setState(169);
 
           if (!(precpred(_ctx, 4))) throw FailedPredicateException(this, "precpred(_ctx, 4)");
-          setState(169);
-          match(C8086Parser::COMMA);
           setState(170);
+          match(C8086Parser::COMMA);
+          setState(171);
           antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken = match(C8086Parser::ID);
 
                     		if(symbolTable->getCurrentScopeID() == "1"){
@@ -1537,7 +1540,7 @@ C8086Parser::Declaration_listContext* C8086Parser::declaration_list(int preceden
                     		else {
                     			symbolTable->insert(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText(),datatype,"local",NULL);
                     			curr_func->incStackElements();
-                    			write("\tSUB SP, 2\t; Line "+to_string(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getLine()));
+                    			write("\tSUB SP, 2");
                     		}
                     	
           break;
@@ -1546,19 +1549,30 @@ C8086Parser::Declaration_listContext* C8086Parser::declaration_list(int preceden
         case 2: {
           _localctx = _tracker.createInstance<Declaration_listContext>(parentContext, parentState);
           pushNewRecursionContext(_localctx, startState, RuleDeclaration_list);
-          setState(172);
+          setState(173);
 
           if (!(precpred(_ctx, 3))) throw FailedPredicateException(this, "precpred(_ctx, 3)");
-          setState(173);
-          match(C8086Parser::COMMA);
           setState(174);
-          antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken = match(C8086Parser::ID);
+          match(C8086Parser::COMMA);
           setState(175);
-          match(C8086Parser::LTHIRD);
+          antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken = match(C8086Parser::ID);
           setState(176);
-          antlrcpp::downCast<Declaration_listContext *>(_localctx)->const_intToken = match(C8086Parser::CONST_INT);
+          match(C8086Parser::LTHIRD);
           setState(177);
+          antlrcpp::downCast<Declaration_listContext *>(_localctx)->const_intToken = match(C8086Parser::CONST_INT);
+          setState(178);
           match(C8086Parser::RTHIRD);
+
+                    		if(symbolTable->getCurrentScopeID() == "1"){
+                    			symbolTable->insert(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText(),datatype,"global",NULL,true,stoi(antlrcpp::downCast<Declaration_listContext *>(_localctx)->const_intToken->getText()));
+                    			write("\t"+antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText()+" DW "+antlrcpp::downCast<Declaration_listContext *>(_localctx)->const_intToken->getText()+" DUP (0000H)");
+                    		}
+                    		else {
+                    			symbolTable->insert(antlrcpp::downCast<Declaration_listContext *>(_localctx)->idToken->getText(),datatype,"local",NULL,true,stoi(antlrcpp::downCast<Declaration_listContext *>(_localctx)->const_intToken->getText()));
+                    			curr_func->incStackElements();
+                    			write("\tSUB SP, "+to_string(stoi(antlrcpp::downCast<Declaration_listContext *>(_localctx)->const_intToken->getText())*2));
+                    		}
+                    	
           break;
         }
 
@@ -1566,7 +1580,7 @@ C8086Parser::Declaration_listContext* C8086Parser::declaration_list(int preceden
           break;
         } 
       }
-      setState(182);
+      setState(184);
       _errHandler->sync(this);
       alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 13, _ctx);
     }
@@ -1636,10 +1650,10 @@ C8086Parser::StatementsContext* C8086Parser::statements(int precedence) {
   try {
     size_t alt;
     enterOuterAlt(_localctx, 1);
-    setState(184);
-    statement();
+    setState(186);
+    antlrcpp::downCast<StatementsContext *>(_localctx)->s = statement(-1);
     _ctx->stop = _input->LT(-1);
-    setState(190);
+    setState(192);
     _errHandler->sync(this);
     alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 14, _ctx);
     while (alt != 2 && alt != atn::ATN::INVALID_ALT_NUMBER) {
@@ -1649,13 +1663,13 @@ C8086Parser::StatementsContext* C8086Parser::statements(int precedence) {
         previousContext = _localctx;
         _localctx = _tracker.createInstance<StatementsContext>(parentContext, parentState);
         pushNewRecursionContext(_localctx, startState, RuleStatements);
-        setState(186);
+        setState(188);
 
         if (!(precpred(_ctx, 1))) throw FailedPredicateException(this, "precpred(_ctx, 1)");
-        setState(187);
-        statement(); 
+        setState(189);
+        antlrcpp::downCast<StatementsContext *>(_localctx)->s = statement(-1); 
       }
-      setState(192);
+      setState(194);
       _errHandler->sync(this);
       alt = getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 14, _ctx);
     }
@@ -1672,6 +1686,11 @@ C8086Parser::StatementsContext* C8086Parser::statements(int precedence) {
 
 C8086Parser::StatementContext::StatementContext(ParserRuleContext *parent, size_t invokingState)
   : ParserRuleContext(parent, invokingState) {
+}
+
+C8086Parser::StatementContext::StatementContext(ParserRuleContext *parent, size_t invokingState, int ih_end_label)
+  : ParserRuleContext(parent, invokingState) {
+  this->ih_end_label = ih_end_label;
 }
 
 C8086Parser::Var_declarationContext* C8086Parser::StatementContext::var_declaration() {
@@ -1759,8 +1778,8 @@ void C8086Parser::StatementContext::exitRule(tree::ParseTreeListener *listener) 
     parserListener->exitStatement(this);
 }
 
-C8086Parser::StatementContext* C8086Parser::statement() {
-  StatementContext *_localctx = _tracker.createInstance<StatementContext>(_ctx, getState());
+C8086Parser::StatementContext* C8086Parser::statement(int ih_end_label) {
+  StatementContext *_localctx = _tracker.createInstance<StatementContext>(_ctx, getState(), ih_end_label);
   enterRule(_localctx, 28, C8086Parser::RuleStatement);
 
 #if __cplusplus > 201703L
@@ -1771,15 +1790,13 @@ C8086Parser::StatementContext* C8086Parser::statement() {
     exitRule();
   });
   try {
-    setState(255);
+    setState(253);
     _errHandler->sync(this);
     switch (getInterpreter<atn::ParserATNSimulator>()->adaptivePredict(_input, 15, _ctx)) {
     case 1: {
       enterOuterAlt(_localctx, 1);
-      setState(193);
+      setState(195);
       var_declaration();
-
-      	
       break;
     }
 
@@ -1787,14 +1804,12 @@ C8086Parser::StatementContext* C8086Parser::statement() {
       enterOuterAlt(_localctx, 2);
       setState(196);
       expression_statement();
-
-      	
       break;
     }
 
     case 3: {
       enterOuterAlt(_localctx, 3);
-      setState(199);
+      setState(197);
       compound_statement();
 
       	
@@ -1803,16 +1818,17 @@ C8086Parser::StatementContext* C8086Parser::statement() {
 
     case 4: {
       enterOuterAlt(_localctx, 4);
-      setState(202);
+      setState(200);
       match(C8086Parser::FOR);
-      setState(203);
+      setState(201);
       match(C8086Parser::LPAREN);
-      setState(204);
+      setState(202);
       expression_statement();
 
-      		int begin_label = label_count;
+      		int begin_label = label_count++;
+      		write("L"+to_string(begin_label)+":");
       	
-      setState(206);
+      setState(204);
       antlrcpp::downCast<StatementContext *>(_localctx)->es = expression_statement();
 
       		write("\tCMP AX, 0");
@@ -1823,18 +1839,18 @@ C8086Parser::StatementContext* C8086Parser::statement() {
       		write("\tJMP L"+to_string(end_label));
       		write("L"+to_string(inc_label)+":");
       	
-      setState(208);
+      setState(206);
       expression();
 
       		write("\tJMP L"+to_string(begin_label));
       	
-      setState(210);
+      setState(208);
       match(C8086Parser::RPAREN);
 
       		write("L"+to_string(true_label)+":");
       	
-      setState(212);
-      statement();
+      setState(210);
+      antlrcpp::downCast<StatementContext *>(_localctx)->s = statement(-1);
 
       		write("\tJMP L"+to_string(inc_label));
       		write("L"+to_string(end_label)+":");
@@ -1844,42 +1860,46 @@ C8086Parser::StatementContext* C8086Parser::statement() {
 
     case 5: {
       enterOuterAlt(_localctx, 5);
-      setState(215);
+      setState(213);
       match(C8086Parser::IF);
-      setState(216);
+      setState(214);
       match(C8086Parser::LPAREN);
-      setState(217);
+      setState(215);
       expression();
-      setState(218);
+      setState(216);
       match(C8086Parser::RPAREN);
 
+      		int true_label = label_count++;
+      		int temp = _localctx->ih_end_label;
+      		if(_localctx->ih_end_label == -1){
+      			antlrcpp::downCast<StatementContext *>(_localctx)->ih_end_label =  label_count++;
+      		}
       		write("\tCMP AX, 0");
-      		write("\tJNE L"+to_string(label_count));
-      		write("\tJMP L"+to_string(label_count+1));
-      		write("L"+to_string(label_count)+":");
-      		label_count++;
+      		write("\tJNE L"+to_string(true_label));
+      		write("\tJMP L"+to_string(_localctx->ih_end_label));
+      		write("L"+to_string(true_label)+":");
       	
-      setState(220);
-      statement();
+      setState(218);
+      antlrcpp::downCast<StatementContext *>(_localctx)->s = statement(_localctx->ih_end_label);
 
-      		write("L"+to_string(label_count)+":");
-      		label_count++;
+      		if(temp == -1)
+      			write("L"+to_string(_localctx->ih_end_label)+":");
       	
       break;
     }
 
     case 6: {
       enterOuterAlt(_localctx, 6);
-      setState(223);
+      setState(221);
       match(C8086Parser::IF);
-      setState(224);
+      setState(222);
       match(C8086Parser::LPAREN);
-      setState(225);
+      setState(223);
       expression();
-      setState(226);
+      setState(224);
       match(C8086Parser::RPAREN);
 
-      		int if_label,else_label,end_label;
+      		int if_label,else_label;
       		write("\tCMP AX, 0");
       		write("\tJNE L"+to_string(label_count));
       		if_label = label_count;
@@ -1887,38 +1907,43 @@ C8086Parser::StatementContext* C8086Parser::statement() {
       		write("\tJMP L"+to_string(label_count));
       		else_label = label_count;
       		label_count++;
-      		end_label = label_count;
+      		int temp = _localctx->ih_end_label;
+      		if(_localctx->ih_end_label == -1){
+      			antlrcpp::downCast<StatementContext *>(_localctx)->ih_end_label =  label_count;
+      		}
       		label_count++;
       		write("L"+to_string(if_label)+":");
       	
-      setState(228);
-      statement();
-      setState(229);
+      setState(226);
+      antlrcpp::downCast<StatementContext *>(_localctx)->s = statement(_localctx->ih_end_label);
+      setState(227);
       match(C8086Parser::ELSE);
 
-      		write("\tJMP L"+to_string(end_label));
+      		write("\tJMP L"+to_string(_localctx->ih_end_label));
       		write("L"+to_string(else_label)+":");
       	
-      setState(231);
-      statement();
+      setState(229);
+      antlrcpp::downCast<StatementContext *>(_localctx)->s = statement(_localctx->ih_end_label);
 
-      		write("L"+to_string(end_label)+":");
+      		if(temp == -1)
+      			write("L"+to_string(_localctx->ih_end_label)+":");
       	
       break;
     }
 
     case 7: {
       enterOuterAlt(_localctx, 7);
-      setState(234);
+      setState(232);
       match(C8086Parser::WHILE);
-      setState(235);
+      setState(233);
       match(C8086Parser::LPAREN);
 
-      		int begin_label = label_count;
+      		int begin_label = label_count++;
+      		write("L"+to_string(begin_label)+":");
       	
-      setState(237);
+      setState(235);
       expression();
-      setState(238);
+      setState(236);
       match(C8086Parser::RPAREN);
 
       		write("\tCMP AX, 0");
@@ -1928,8 +1953,8 @@ C8086Parser::StatementContext* C8086Parser::statement() {
       		write("\tJMP L"+to_string(end_label));
       		write("L"+to_string(true_label)+":");
       	
-      setState(240);
-      statement();
+      setState(238);
+      antlrcpp::downCast<StatementContext *>(_localctx)->s = statement(-1);
 
       		write("\tJMP L"+to_string(begin_label));
       		write("L"+to_string(end_label)+":");
@@ -1939,16 +1964,16 @@ C8086Parser::StatementContext* C8086Parser::statement() {
 
     case 8: {
       enterOuterAlt(_localctx, 8);
-      setState(243);
+      setState(241);
       match(C8086Parser::PRINTLN);
-      setState(244);
+      setState(242);
       match(C8086Parser::LPAREN);
-      setState(245);
+      setState(243);
       antlrcpp::downCast<StatementContext *>(_localctx)->idToken = match(C8086Parser::ID);
-      setState(246);
+      setState(244);
       match(C8086Parser::RPAREN);
-      setState(247);
-      antlrcpp::downCast<StatementContext *>(_localctx)->semicolonToken = match(C8086Parser::SEMICOLON);
+      setState(245);
+      antlrcpp::downCast<StatementContext *>(_localctx)->sm = match(C8086Parser::SEMICOLON);
 
       		if(symbolTable->getVariableScope(antlrcpp::downCast<StatementContext *>(_localctx)->idToken->getText()) == "global"){
       			write("\tMOV AX, "+antlrcpp::downCast<StatementContext *>(_localctx)->idToken->getText());
@@ -1963,7 +1988,8 @@ C8086Parser::StatementContext* C8086Parser::statement() {
       				write("\tMOV AX, [BP"+to_string(-stack_index*2)+"]");
       			}
       		}
-      		write("\tCALL print_output\n\tCALL new_line     ; Line "+to_string(antlrcpp::downCast<StatementContext *>(_localctx)->semicolonToken->getLine()));
+      		write("\tCALL print_output\n\tCALL new_line");
+      		write("\t\t\t\t\t; Line "+to_string(antlrcpp::downCast<StatementContext *>(_localctx)->sm->getLine()));
       	
       break;
     }
@@ -1971,14 +1997,15 @@ C8086Parser::StatementContext* C8086Parser::statement() {
     case 9: {
       enterOuterAlt(_localctx, 9);
       write("");
-      setState(250);
+      setState(248);
       match(C8086Parser::RETURN);
-      setState(251);
+      setState(249);
       expression();
-      setState(252);
-      antlrcpp::downCast<StatementContext *>(_localctx)->semicolonToken = match(C8086Parser::SEMICOLON);
+      setState(250);
+      antlrcpp::downCast<StatementContext *>(_localctx)->sm = match(C8086Parser::SEMICOLON);
 
-      		write("\tJMP L"+to_string(end_label)+"\t; Line "+to_string(antlrcpp::downCast<StatementContext *>(_localctx)->semicolonToken->getLine()));
+      		write("\tJMP L"+to_string(end_label));
+      		write("\t\t\t\t\t; Line "+to_string(antlrcpp::downCast<StatementContext *>(_localctx)->sm->getLine()));
       	
       break;
     }
@@ -2045,8 +2072,11 @@ C8086Parser::Expression_statementContext* C8086Parser::expression_statement() {
     switch (_input->LA(1)) {
       case C8086Parser::SEMICOLON: {
         enterOuterAlt(_localctx, 1);
-        setState(257);
-        match(C8086Parser::SEMICOLON);
+        setState(255);
+        antlrcpp::downCast<Expression_statementContext *>(_localctx)->sm = match(C8086Parser::SEMICOLON);
+
+        		write("\t\t\t\t\t; Line "+to_string(antlrcpp::downCast<Expression_statementContext *>(_localctx)->sm->getLine()));
+        	
         break;
       }
 
@@ -2057,10 +2087,13 @@ C8086Parser::Expression_statementContext* C8086Parser::expression_statement() {
       case C8086Parser::CONST_INT:
       case C8086Parser::CONST_FLOAT: {
         enterOuterAlt(_localctx, 2);
-        setState(258);
+        setState(257);
         expression();
-        setState(259);
-        match(C8086Parser::SEMICOLON);
+        setState(258);
+        antlrcpp::downCast<Expression_statementContext *>(_localctx)->sm = match(C8086Parser::SEMICOLON);
+
+        		write("\t\t\t\t\t; Line "+to_string(antlrcpp::downCast<Expression_statementContext *>(_localctx)->sm->getLine()));
+        	
         break;
       }
 
@@ -2391,9 +2424,9 @@ C8086Parser::Logic_expressionContext* C8086Parser::logic_expression() {
       			write("\tJMP L"+to_string(true_label));
       		}
       		write("L"+to_string(true_label)+":");
-      		write("MOV AX, 1\n\tJMP L"+to_string(end_label));
+      		write("\tMOV AX, 1\n\tJMP L"+to_string(end_label));
       		write("L"+to_string(false_label)+":");
-      		write("MOV AX, 0");
+      		write("\tMOV AX, 0");
       		write("L"+to_string(end_label)+":");
       	
       break;
@@ -2957,8 +2990,6 @@ C8086Parser::FactorContext* C8086Parser::factor() {
       			write("\tMOV CX, "+antlrcpp::downCast<FactorContext *>(_localctx)->v->name);
       		}
       		else{
-      			write("L"+to_string(label_count)+":");
-      			label_count++;
       			if(_localctx->type == "array" && antlrcpp::downCast<FactorContext *>(_localctx)->v->name != "[BP+SI]"){
       				write("\tPOP BX");
       				write("\tMOV AX, 2");
@@ -3065,8 +3096,8 @@ C8086Parser::FactorContext* C8086Parser::factor() {
       			write("\tPOP AX");
       			write("\tNEG SI");
       		}
-      		write("L"+to_string(label_count)+":");
-      		label_count++;
+      		// write("L"+to_string(label_count)+":");
+      		// label_count++;
       		write("\tMOV AX, "+antlrcpp::downCast<FactorContext *>(_localctx)->v->name);
       		write("\tPUSH AX");
       		write("\tINC AX");

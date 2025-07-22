@@ -6,7 +6,7 @@
     #include "C8086Lexer.h"
 	#include "SymbolTable/2105128_SymbolTable.cpp"
 
-    extern std::ofstream parserLogFile;
+	extern std::ofstream asmFile;
 
 
 // Generated from C8086Parser.g4 by ANTLR 4.13.2
@@ -59,21 +59,81 @@ public:
 
 
       void write(const std::string message) {
-          if (!parserLogFile) {
-              std::cout << "Error opening parserLogFile.txt" << std::endl;
+          if (!asmFile) {
+              std::cout << "Error opening code.asm" << std::endl;
               return;
           }
 
-          parserLogFile << message << std::endl;
-          parserLogFile.flush();
+          asmFile << message << std::endl;
+          asmFile.flush();
       }
 
   	void initiate() {
-  		parserLogFile << ".MODEL SMALL" << std::endl;
-  		parserLogFile << ".STACK 100H" << std::endl<<std::endl;
-  		parserLogFile << ".DATA" << std::endl;
-  		parserLogFile << "\tnumber DB \"00000$\"" << std::endl;
-  		parserLogFile.flush();
+  		asmFile << ".MODEL SMALL" << std::endl;
+  		asmFile << ".STACK 100H" << std::endl<<std::endl;
+  		asmFile << ".DATA" << std::endl;
+  		asmFile << "\tnumber DB \"00000$\"" << std::endl;
+  		asmFile.flush();
+  	}
+
+  	void optimize() {
+  		ifstream code("output/code.asm");
+  		ofstream optcode("output/optcode.asm");
+  		if(!code.is_open()){
+  			cerr<<"Error opening code.asm for optimization"<<endl;
+  		}
+
+  		string prev_left="";
+  		string prev_right="";
+  		string prev_instr="";
+  		string line;
+  		while(getline(code,line)){
+  			stringstream ss(line);
+  			string first_part,second_part,instr,left,right;
+  			getline(ss,first_part,',');
+  			getline(ss,second_part,',');
+  			stringstream ss2(first_part);
+  			stringstream ss3(second_part);
+  			ss2>>instr;
+  			ss2>>left;
+  			ss3>>right;
+  			if(instr == "MOV"){
+  				if(prev_instr == ""){
+  					prev_left = left;
+  					prev_right = right;
+  					prev_instr = line;
+  				}
+  				else{
+  					if(prev_left == right && prev_right == left){
+  						optcode << prev_instr<<endl;
+  						prev_instr = "";
+  						prev_left = "";
+  						prev_right = "";
+  					}
+  					else{
+  						optcode << prev_instr<<endl;
+  						prev_instr = line;
+  						prev_left = left;
+  						prev_right = right;
+  					}
+  				}
+  			}
+  			else{
+  				if(instr == ";"){
+  					continue;
+  				}
+  				if(prev_instr != ""){
+  					optcode << prev_instr<<endl;
+  					optcode << line<<endl;
+  					prev_instr = "";
+  					prev_left = "";
+  					prev_right = "";
+  				}
+  				else{
+  					optcode << line<<endl;
+  				}
+  			}
+  		}
   	}
 
   	SymbolTable* symbolTable = new SymbolTable(30, &HashFunction::sdbmHash);
@@ -328,6 +388,7 @@ public:
   Declaration_listContext* declaration_list(int precedence);
   class  StatementsContext : public antlr4::ParserRuleContext {
   public:
+    C8086Parser::StatementContext *s = nullptr;
     StatementsContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     StatementContext *statement();
@@ -342,10 +403,13 @@ public:
   StatementsContext* statements(int precedence);
   class  StatementContext : public antlr4::ParserRuleContext {
   public:
+    int ih_end_label;
     C8086Parser::Expression_statementContext *es = nullptr;
+    C8086Parser::StatementContext *s = nullptr;
     antlr4::Token *idToken = nullptr;
-    antlr4::Token *semicolonToken = nullptr;
+    antlr4::Token *sm = nullptr;
     StatementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
+    StatementContext(antlr4::ParserRuleContext *parent, size_t invokingState, int ih_end_label);
     virtual size_t getRuleIndex() const override;
     Var_declarationContext *var_declaration();
     std::vector<Expression_statementContext *> expression_statement();
@@ -370,10 +434,11 @@ public:
    
   };
 
-  StatementContext* statement();
+  StatementContext* statement(int ih_end_label);
 
   class  Expression_statementContext : public antlr4::ParserRuleContext {
   public:
+    antlr4::Token *sm = nullptr;
     Expression_statementContext(antlr4::ParserRuleContext *parent, size_t invokingState);
     virtual size_t getRuleIndex() const override;
     antlr4::tree::TerminalNode *SEMICOLON();
